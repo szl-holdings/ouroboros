@@ -184,10 +184,20 @@ describe('almanac cycle advancer', () => {
 });
 
 describe('v3 proof route id aliases', () => {
-  it('PRF_SECURITY_ACTION (v3) shares the contract of PRF_SECURITY_ACTIONS (v2)', () => {
-    expect(PROOF_ROUTES.PRF_SECURITY_ACTION.requiredArtifacts).toEqual(
-      PROOF_ROUTES.PRF_SECURITY_ACTIONS.requiredArtifacts,
-    );
+  it('PRF_SECURITY_ACTION (v3) requires the v3-exact artifact set, not the v2 one', () => {
+    expect(PROOF_ROUTES.PRF_SECURITY_ACTION.requiredArtifacts).toEqual([
+      'validator_result',
+      'escalation_check',
+      'receipt',
+      'approval_if_required',
+    ]);
+    // v2 contract is still served separately for v2 receipts.
+    expect(PROOF_ROUTES.PRF_SECURITY_ACTIONS.requiredArtifacts).toEqual([
+      'validator_result',
+      'risk_tier',
+      'escalation_check',
+      'receipt',
+    ]);
   });
 
   it('PRF_DATA_CONVERGENCE (v3) shares the contract of PRF_DATA_SYNC (v2)', () => {
@@ -356,6 +366,32 @@ describe('evidence pack contract', () => {
       riskTier: 'R2_moderate',
     });
     expect(validateEvidencePack(p)).toContain('invalid_proof_route_id');
+  });
+
+  it('rejects prototype-chain keys (no `in`-operator bypass for route_id or risk_tier)', () => {
+    for (const proto of ['toString', 'constructor', '__proto__', 'hasOwnProperty']) {
+      const p1 = buildEvidencePack({
+        evidencePackId: 'ep-1',
+        sourceIds: ['src-a'],
+        locators: ['s3://bucket/key'],
+        proofRouteId: proto as never,
+        receiptId: 'rcpt-1',
+        traceId: 'trace-1',
+        riskTier: 'R2_moderate',
+      });
+      expect(validateEvidencePack(p1)).toContain('invalid_proof_route_id');
+
+      const p2 = buildEvidencePack({
+        evidencePackId: 'ep-1',
+        sourceIds: ['src-a'],
+        locators: ['s3://bucket/key'],
+        proofRouteId: 'PRF_OPERATIONAL_ACTION',
+        receiptId: 'rcpt-1',
+        traceId: 'trace-1',
+        riskTier: proto as never,
+      });
+      expect(validateEvidencePack(p2)).toContain('invalid_risk_tier');
+    }
   });
 
   it('flags an unknown risk_tier at runtime', () => {
