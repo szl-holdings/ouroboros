@@ -183,6 +183,20 @@ describe('almanac cycle advancer', () => {
   });
 });
 
+describe('v3 proof route id aliases', () => {
+  it('PRF_SECURITY_ACTION (v3) shares the contract of PRF_SECURITY_ACTIONS (v2)', () => {
+    expect(PROOF_ROUTES.PRF_SECURITY_ACTION.requiredArtifacts).toEqual(
+      PROOF_ROUTES.PRF_SECURITY_ACTIONS.requiredArtifacts,
+    );
+  });
+
+  it('PRF_DATA_CONVERGENCE (v3) shares the contract of PRF_DATA_SYNC (v2)', () => {
+    expect(PROOF_ROUTES.PRF_DATA_CONVERGENCE.requiredArtifacts).toEqual(
+      PROOF_ROUTES.PRF_DATA_SYNC.requiredArtifacts,
+    );
+  });
+});
+
 describe('v3 proof routes', () => {
   it('exposes PRF_CLAIM_BOUND_RESEARCH with v3 contract artifacts', () => {
     expect(PROOF_ROUTES.PRF_CLAIM_BOUND_RESEARCH.requiredArtifacts).toEqual([
@@ -328,6 +342,33 @@ describe('evidence pack contract', () => {
       riskTier: 'R2_moderate',
     });
     expect(validateEvidencePack(p)).toContain('missing_evidence_pack_id');
+  });
+
+  it('flags an unknown proof_route_id at runtime', () => {
+    const p = buildEvidencePack({
+      evidencePackId: 'ep-1',
+      sourceIds: ['src-a'],
+      locators: ['s3://bucket/key'],
+      // simulate an untyped caller that smuggles in a bad route id
+      proofRouteId: 'PRF_NOT_REAL' as never,
+      receiptId: 'rcpt-1',
+      traceId: 'trace-1',
+      riskTier: 'R2_moderate',
+    });
+    expect(validateEvidencePack(p)).toContain('invalid_proof_route_id');
+  });
+
+  it('flags an unknown risk_tier at runtime', () => {
+    const p = buildEvidencePack({
+      evidencePackId: 'ep-1',
+      sourceIds: ['src-a'],
+      locators: ['s3://bucket/key'],
+      proofRouteId: 'PRF_CLAIM_BOUND_RESEARCH',
+      receiptId: 'rcpt-1',
+      traceId: 'trace-1',
+      riskTier: 'R5_apocalyptic' as never,
+    });
+    expect(validateEvidencePack(p)).toContain('invalid_risk_tier');
   });
 });
 
