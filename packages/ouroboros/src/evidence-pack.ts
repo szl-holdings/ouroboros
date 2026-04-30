@@ -75,10 +75,13 @@ export function validateEvidencePack(
   if (pack.locators.length === 0) errors.push('missing_locators');
   if (!pack.receiptId) errors.push('missing_receipt_id');
   if (!pack.traceId) errors.push('missing_trace_id');
-  if (!pack.proofRouteId || !(pack.proofRouteId in PROOF_ROUTES)) {
+  // Use Object.hasOwn — the `in` operator walks the prototype chain and
+  // would accept attacker-controlled values like `toString`, `constructor`,
+  // or `__proto__` as valid route ids / risk tiers.
+  if (!pack.proofRouteId || !Object.hasOwn(PROOF_ROUTES, pack.proofRouteId)) {
     errors.push('invalid_proof_route_id');
   }
-  if (!pack.riskTier || !(pack.riskTier in RISK_TIERS)) {
+  if (!pack.riskTier || !Object.hasOwn(RISK_TIERS, pack.riskTier)) {
     errors.push('invalid_risk_tier');
   }
   return errors;
