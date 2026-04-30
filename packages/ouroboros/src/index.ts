@@ -31,6 +31,8 @@ export type { AllocatorInput, AllocatorOutput } from './depth-allocator.js';
 export {
   PROOF_ROUTES,
   resolveProofRoute,
+  resolveV4ProofRouteId,
+  ROUTE_ID_V4_ALIASES,
   validateProofArtifacts,
 } from './proof-route.js';
 export type {
@@ -38,6 +40,7 @@ export type {
   ProofArtifactKind,
   ProofRoute,
   ProofRouteId,
+  ProofRouteIdV4,
 } from './proof-route.js';
 
 export { evaluateRiskTier, RISK_TIERS } from './risk-tier.js';
@@ -79,6 +82,7 @@ export {
   dispatchDomainPack,
   DOMAIN_PACKS,
   TASK_TO_PACK,
+  TASK_TO_PACK_V4,
 } from './domain-pack.js';
 export type {
   DomainPack,
