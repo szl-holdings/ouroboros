@@ -43,9 +43,11 @@ export type ProofArtifactKind =
   // PRF_CLAIM_BOUND_RESEARCH binds a research claim to a `locator` (where
   // the source lives) AND a separate `trace_reference` (the loop trace
   // pointer). Kept distinct from `trace_locator` so the v2 routes are not
-  // disturbed.
+  // disturbed. PRF_SECURITY_ACTION (v3) additionally requires the
+  // `approval_if_required` artifact in place of `risk_tier`.
   | 'locator'
-  | 'trace_reference';
+  | 'trace_reference'
+  | 'approval_if_required';
 
 export interface ProofRoute {
   readonly routeId: ProofRouteId;
@@ -89,7 +91,9 @@ export const PROOF_ROUTES: Readonly<Record<ProofRouteId, ProofRoute>> = Object.f
   PRF_SECURITY_ACTION: freezeRoute({
     routeId: 'PRF_SECURITY_ACTION',
     appliesTo: 'security_or_threat_actions',
-    requiredArtifacts: ['validator_result', 'risk_tier', 'escalation_check', 'receipt'],
+    // Matches v3 contract exactly. Note: drops `risk_tier` from the v2
+    // PRF_SECURITY_ACTIONS list and adds `approval_if_required`.
+    requiredArtifacts: ['validator_result', 'escalation_check', 'receipt', 'approval_if_required'],
   }),
   PRF_DATA_CONVERGENCE: freezeRoute({
     routeId: 'PRF_DATA_CONVERGENCE',
