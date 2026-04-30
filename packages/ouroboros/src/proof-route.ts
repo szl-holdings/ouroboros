@@ -118,6 +118,43 @@ export const ROUTE_ID_V2_ALIASES: Readonly<Record<ProofRouteId, ProofRouteId>> =
 });
 
 /**
+ * v4 short-name aliases per ouroboros-runtime-contract.v4.json. The v4
+ * payload labels routes with shorter ids (PRF_RESEARCH, PRF_SECURITY,
+ * PRF_DATA_SYNC, PRF_OPERATIONAL); each maps to a canonical v3 route
+ * with the same artifact contract semantics. Receipt normalization
+ * tooling can resolve any v4 label back to its canonical PROOF_ROUTES
+ * entry via this map.
+ */
+export type ProofRouteIdV4 =
+  | 'PRF_RESEARCH'
+  | 'PRF_SECURITY'
+  | 'PRF_DATA_SYNC'
+  | 'PRF_OPERATIONAL';
+
+export const ROUTE_ID_V4_ALIASES: Readonly<Record<ProofRouteIdV4, ProofRouteId>> =
+  Object.freeze({
+    PRF_RESEARCH: 'PRF_CLAIM_BOUND_RESEARCH',
+    PRF_SECURITY: 'PRF_SECURITY_ACTION',
+    PRF_DATA_SYNC: 'PRF_DATA_CONVERGENCE',
+    PRF_OPERATIONAL: 'PRF_OPERATIONAL_ACTION',
+  });
+
+/**
+ * Resolve a v4 short label (or v3 canonical id) to its canonical
+ * `ProofRouteId`. Returns `undefined` if the input is neither a v4
+ * alias nor a known proof route id.
+ */
+export function resolveV4ProofRouteId(label: string): ProofRouteId | undefined {
+  if (Object.hasOwn(ROUTE_ID_V4_ALIASES, label)) {
+    return ROUTE_ID_V4_ALIASES[label as ProofRouteIdV4];
+  }
+  if (Object.hasOwn(PROOF_ROUTES, label)) {
+    return label as ProofRouteId;
+  }
+  return undefined;
+}
+
+/**
  * The smallest contract a caller must produce so the resolver can route.
  * `kind` is the abstract category; `domainPack` and `actionType` add
  * disambiguation when the same kind appears across multiple packs.
