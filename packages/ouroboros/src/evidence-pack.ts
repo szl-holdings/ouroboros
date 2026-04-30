@@ -8,8 +8,8 @@
  * receipt without re-running the loop.
  */
 
-import type { ProofRouteId } from './proof-route.js';
-import type { RiskTier } from './risk-tier.js';
+import { PROOF_ROUTES, type ProofRouteId } from './proof-route.js';
+import { RISK_TIERS, type RiskTier } from './risk-tier.js';
 
 export interface EvidencePack {
   readonly evidencePackId: string;
@@ -52,7 +52,9 @@ export type EvidencePackValidationError =
   | 'missing_sources'
   | 'missing_locators'
   | 'missing_receipt_id'
-  | 'missing_trace_id';
+  | 'missing_trace_id'
+  | 'invalid_proof_route_id'
+  | 'invalid_risk_tier';
 
 /**
  * Validate that an evidence pack carries the minimum required provenance.
@@ -60,7 +62,9 @@ export type EvidencePackValidationError =
  * pack is acceptable for high-consequence routing.
  *
  * Covers every required field in `evidence_pack_contract` from
- * `docs/research/ouroboros-runtime-contract.v3.json`.
+ * `docs/research/ouroboros-runtime-contract.v3.json`. Runtime checks the
+ * route-id and risk-tier values as well so untyped callers cannot bypass
+ * the contract.
  */
 export function validateEvidencePack(
   pack: EvidencePack,
@@ -71,5 +75,11 @@ export function validateEvidencePack(
   if (pack.locators.length === 0) errors.push('missing_locators');
   if (!pack.receiptId) errors.push('missing_receipt_id');
   if (!pack.traceId) errors.push('missing_trace_id');
+  if (!pack.proofRouteId || !(pack.proofRouteId in PROOF_ROUTES)) {
+    errors.push('invalid_proof_route_id');
+  }
+  if (!pack.riskTier || !(pack.riskTier in RISK_TIERS)) {
+    errors.push('invalid_risk_tier');
+  }
   return errors;
 }
