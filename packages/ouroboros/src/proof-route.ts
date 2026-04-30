@@ -32,7 +32,14 @@ export type ProofArtifactKind =
   | 'escalation_check'
   | 'source_priority_record'
   | 'delta_log'
-  | 'consistency_score';
+  | 'consistency_score'
+  // v3 artifact kinds — required by ouroboros-runtime-contract.v3.json.
+  // PRF_CLAIM_BOUND_RESEARCH binds a research claim to a `locator` (where
+  // the source lives) AND a separate `trace_reference` (the loop trace
+  // pointer). Kept distinct from `trace_locator` so the v2 routes are not
+  // disturbed.
+  | 'locator'
+  | 'trace_reference';
 
 export interface ProofRoute {
   readonly routeId: ProofRouteId;
@@ -63,7 +70,8 @@ export const PROOF_ROUTES: Readonly<Record<ProofRouteId, ProofRoute>> = Object.f
   PRF_CLAIM_BOUND_RESEARCH: freezeRoute({
     routeId: 'PRF_CLAIM_BOUND_RESEARCH',
     appliesTo: 'research_claims_or_thesis_assertions',
-    requiredArtifacts: ['source_binding', 'trace_locator', 'receipt'],
+    // Matches v3 contract exactly: source_binding + locator + trace_reference + receipt.
+    requiredArtifacts: ['source_binding', 'locator', 'trace_reference', 'receipt'],
   }),
   PRF_OPERATIONAL_ACTION: freezeRoute({
     routeId: 'PRF_OPERATIONAL_ACTION',
@@ -77,15 +85,23 @@ export const PROOF_ROUTES: Readonly<Record<ProofRouteId, ProofRoute>> = Object.f
  * `kind` is the abstract category; `domainPack` and `actionType` add
  * disambiguation when the same kind appears across multiple packs.
  */
+export type ClaimOrActionCategory =
+  // v2 categories
+  | 'system_design'
+  | 'informational'
+  | 'security'
+  | 'threat_response'
+  | 'data_merge'
+  | 'data_sync'
+  // v3 categories — needed so the resolver can return the v3 routes.
+  | 'research_claim'
+  | 'thesis_assertion'
+  | 'operational_action'
+  | 'client_action';
+
 export interface ClaimOrAction {
   kind: 'claim' | 'action';
-  category:
-    | 'system_design'
-    | 'informational'
-    | 'security'
-    | 'threat_response'
-    | 'data_merge'
-    | 'data_sync';
+  category: ClaimOrActionCategory;
   domainPack?: string;
   actionType?: string;
 }
@@ -106,6 +122,12 @@ export function resolveProofRoute(input: ClaimOrAction): ProofRoute | null {
     case 'data_merge':
     case 'data_sync':
       return PROOF_ROUTES.PRF_DATA_SYNC;
+    case 'research_claim':
+    case 'thesis_assertion':
+      return PROOF_ROUTES.PRF_CLAIM_BOUND_RESEARCH;
+    case 'operational_action':
+    case 'client_action':
+      return PROOF_ROUTES.PRF_OPERATIONAL_ACTION;
     default:
       return null;
   }
