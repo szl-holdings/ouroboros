@@ -21,7 +21,12 @@ export type DomainPackId =
   | 'medical_review'
   | 'legal_ops'
   | 'government_workflows'
-  | 'creative_studio';
+  | 'creative_studio'
+  // v4 ecosystem packs (replit_innovate_full_payload). Sentra_pack and
+  // Amaru_pack are v4-canonical names that mirror the security_ops and
+  // data_sync_ops packs respectively, with v4 ingestion-contract semantics.
+  | 'Sentra_pack'
+  | 'Amaru_pack';
 
 export interface DomainPack {
   readonly packId: DomainPackId;
@@ -97,7 +102,44 @@ export const DOMAIN_PACKS: Readonly<Record<DomainPackId, DomainPack>> = Object.f
     maxTierWithoutOverride: 'R2_moderate',
     evidenceRequired: false,
   }),
+  // v4 ecosystem packs (replit_innovate_full_payload).
+  Sentra_pack: freeze({
+    packId: 'Sentra_pack',
+    purpose:
+      'recursive threat modeling, security review, escalation, and security evidence workflows (v4 Sentra ingestion contract powered by A11oy_core)',
+    maxTierWithoutOverride: 'R3_high',
+    evidenceRequired: true,
+  }),
+  Amaru_pack: freeze({
+    packId: 'Amaru_pack',
+    purpose:
+      'convergent data synchronization, merge governance, conflict reconciliation, and state consistency (v4 Amaru ingestion contract powered by A11oy_core)',
+    maxTierWithoutOverride: 'R3_high',
+    evidenceRequired: true,
+  }),
 });
+
+/**
+ * v4 task-type → pack mapping per ouroboros-runtime-contract.v4.json.
+ * The v4 payload introduces `security_review → Sentra_pack` and
+ * `data_sync → Amaru_pack`. Use this map (not the v3 TASK_TO_PACK)
+ * when a caller is explicitly running under the v4 ecosystem layer.
+ */
+export type RoutingTaskTypeV4 =
+  | 'security_review'
+  | 'data_sync'
+  | 'property_ops'
+  | 'research'
+  | 'finance';
+
+export const TASK_TO_PACK_V4: Readonly<Record<RoutingTaskTypeV4, DomainPackId>> =
+  Object.freeze({
+    security_review: 'Sentra_pack',
+    data_sync: 'Amaru_pack',
+    property_ops: 'property_ops',
+    research: 'research_ops',
+    finance: 'finance_ops',
+  });
 
 export type RoutingTaskType =
   | 'agent_orchestration'
