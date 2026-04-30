@@ -2,8 +2,9 @@
 
   > Bounded loops with measurable convergence as a system primitive — now with v6 ecosystem layer and government readiness module.
 
-  [![Tests](https://img.shields.io/badge/tests-133%2F133-2da44e?style=flat-square)](./packages/ouroboros)
-  [![v6 contract](https://img.shields.io/badge/contract-v6.0.0-2b6cb0?style=flat-square)](https://github.com/szl-holdings/ouroboros-thesis/blob/main/a11oy-ultimate-replit-payload.v6.json)
+  [![Tests](https://img.shields.io/badge/tests-142%2F142-2da44e?style=flat-square)](./packages/ouroboros)
+  [![v6 contract](https://img.shields.io/badge/contract-v6.1.0-2b6cb0?style=flat-square)](https://github.com/szl-holdings/ouroboros-thesis/blob/main/a11oy-ultimate-replit-payload.v6.json)
+  [![Adaptive depth](https://img.shields.io/badge/EntropyDepthAllocator-v3-805ad5?style=flat-square)](https://github.com/szl-holdings/ouroboros-thesis/blob/main/papers/ouroboros-thesis-v3.md)
   [![NYSTEC](https://img.shields.io/badge/NYSTEC%20audit-2026--04--30-805ad5?style=flat-square)](./docs/audit/szl-government-readiness.md)
   [![License](https://img.shields.io/badge/license-Proprietary-red?style=flat-square)](./LICENSE)
 
@@ -70,7 +71,7 @@
 
   ## Status
 
-  `v6.0.0` — Used in production by all seven products in the [SZL Holdings](https://github.com/szl-holdings) portfolio: Amaru (`PRF_DATA_SYNC`), Sentra (`PRF_SECURITY_ACTIONS`), and A11oy / Counsel / Terra / Vessels / Carlota Jo (`PRF_SYSTEM_CLAIMS`).
+    `v6.1.0` — Adds the **EntropyDepthAllocator** (`packages/codex-kernel/src/depth-allocator.ts` in the platform monorepo, exported as `decideDepth()`) per Ouroboros Thesis v3 §3.2. Pure-function controller over Δ-magnitude and validator entropy with verdicts `continue` / `early_exit_converged` / `early_exit_entropy` / `extend`. Opt-in via `loop_policy.adaptive_depth.enabled = true`; with the flag off, runs are bit-identical to v6.0.0 (Dresden Venus replay hash unchanged). Used in production by all seven products in the [SZL Holdings](https://github.com/szl-holdings) portfolio.
 
   ## Tests
 
@@ -79,7 +80,7 @@
   pnpm exec vitest run --no-coverage
   ```
 
-  **133/133 passing** — covers proof-route resolver, risk-tier gate, almanac cycle advancer, v6 services/halts/routing, permission matrix (deny-by-default pinned), sandbox policy (`class` wire-format pinned), agent-registry validation, and 28 pinning tests for every cardinal fact in the government readiness audit.
+  **142/142 passing** — covers proof-route resolver, risk-tier gate, almanac cycle advancer, v6 services/halts/routing, permission matrix (deny-by-default pinned), sandbox policy (`class` wire-format pinned), agent-registry validation, and 28 pinning tests for every cardinal fact in the government readiness audit. v6.1.0 adds 9 EntropyDepthAllocator pure-function and precedence tests covering Δ-witness, severity entropy, rolling soft-fail rate, all four verdict branches, the convergence-beats-entropy precedence rule, and bit-identical determinism.
 
   ---
 
