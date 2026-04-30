@@ -19,9 +19,15 @@ export type ProofRouteId =
   | 'PRF_SYSTEM_CLAIMS'
   | 'PRF_SECURITY_ACTIONS'
   | 'PRF_DATA_SYNC'
-  // v3 routes (added per ouroboros-runtime-contract.v3.json)
+  // v3 routes (added per ouroboros-runtime-contract.v3.json).
+  // PRF_SECURITY_ACTION and PRF_DATA_CONVERGENCE are v3 renames of the
+  // v2 IDs PRF_SECURITY_ACTIONS and PRF_DATA_SYNC respectively. Both IDs
+  // are registered with identical artifact contracts so v2 callers keep
+  // working while v3 receipts can use the canonical v3 names.
   | 'PRF_CLAIM_BOUND_RESEARCH'
-  | 'PRF_OPERATIONAL_ACTION';
+  | 'PRF_OPERATIONAL_ACTION'
+  | 'PRF_SECURITY_ACTION'
+  | 'PRF_DATA_CONVERGENCE';
 
 export type ProofArtifactKind =
   | 'source_binding'
@@ -78,6 +84,33 @@ export const PROOF_ROUTES: Readonly<Record<ProofRouteId, ProofRoute>> = Object.f
     appliesTo: 'operational_or_client_actions',
     requiredArtifacts: ['validator_result', 'risk_tier', 'receipt'],
   }),
+  // v3-canonical aliases. Identical artifact contracts to their v2 siblings;
+  // both IDs are accepted so v2 receipts and v3 receipts both validate.
+  PRF_SECURITY_ACTION: freezeRoute({
+    routeId: 'PRF_SECURITY_ACTION',
+    appliesTo: 'security_or_threat_actions',
+    requiredArtifacts: ['validator_result', 'risk_tier', 'escalation_check', 'receipt'],
+  }),
+  PRF_DATA_CONVERGENCE: freezeRoute({
+    routeId: 'PRF_DATA_CONVERGENCE',
+    appliesTo: 'data_merge_or_sync_actions',
+    requiredArtifacts: ['source_priority_record', 'delta_log', 'consistency_score', 'receipt'],
+  }),
+});
+
+/**
+ * Maps each v3-canonical route ID to its v2 alias (or itself when there
+ * is no rename). Useful for receipt normalization and replay tooling that
+ * needs to compare v2 and v3 receipts.
+ */
+export const ROUTE_ID_V2_ALIASES: Readonly<Record<ProofRouteId, ProofRouteId>> = Object.freeze({
+  PRF_SYSTEM_CLAIMS: 'PRF_SYSTEM_CLAIMS',
+  PRF_SECURITY_ACTIONS: 'PRF_SECURITY_ACTIONS',
+  PRF_DATA_SYNC: 'PRF_DATA_SYNC',
+  PRF_CLAIM_BOUND_RESEARCH: 'PRF_CLAIM_BOUND_RESEARCH',
+  PRF_OPERATIONAL_ACTION: 'PRF_OPERATIONAL_ACTION',
+  PRF_SECURITY_ACTION: 'PRF_SECURITY_ACTIONS',
+  PRF_DATA_CONVERGENCE: 'PRF_DATA_SYNC',
 });
 
 /**
