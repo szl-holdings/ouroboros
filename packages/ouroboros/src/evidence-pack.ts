@@ -48,6 +48,7 @@ export function buildEvidencePack(input: EvidencePackInput): EvidencePack {
 }
 
 export type EvidencePackValidationError =
+  | 'missing_evidence_pack_id'
   | 'missing_sources'
   | 'missing_locators'
   | 'missing_receipt_id'
@@ -57,11 +58,15 @@ export type EvidencePackValidationError =
  * Validate that an evidence pack carries the minimum required provenance.
  * Returns the list of missing-field error codes; an empty list means the
  * pack is acceptable for high-consequence routing.
+ *
+ * Covers every required field in `evidence_pack_contract` from
+ * `docs/research/ouroboros-runtime-contract.v3.json`.
  */
 export function validateEvidencePack(
   pack: EvidencePack,
 ): EvidencePackValidationError[] {
   const errors: EvidencePackValidationError[] = [];
+  if (!pack.evidencePackId) errors.push('missing_evidence_pack_id');
   if (pack.sourceIds.length === 0) errors.push('missing_sources');
   if (pack.locators.length === 0) errors.push('missing_locators');
   if (!pack.receiptId) errors.push('missing_receipt_id');
