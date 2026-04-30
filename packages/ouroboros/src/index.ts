@@ -50,10 +50,12 @@ export type {
 
 export {
   advanceAlmanac,
+  CYCLE_ID_V4_ALIASES,
   DEFAULT_CYCLES,
   INITIAL_ALMANAC_STATE,
   rebuildAlmanac,
   V3_CYCLES,
+  V4_CYCLES,
 } from './almanac.js';
 export type {
   AlmanacAdvanceResult,
@@ -113,3 +115,48 @@ export type {
   OperationalMode,
   OperationalModePolicy,
 } from './operational-modes.js';
+
+// ─── v4 ecosystem-master modules (replit_innovate_full_payload) ──────────────
+// Closes the v4 "next_code_bindings" pieces from
+// docs/research/ouroboros-runtime-contract.v4.json:
+//   - validators.registry              → ./validator-registry.js
+//   - ingestion_contracts (Sentra/Amaru) → ./ingestion-contract.js
+//   - innovation_engine                → ./innovation-engine.js
+//   - output_paths                     → ./output-paths.js
+//   - paris_cadence_cycle alias        → ./almanac.js (CYCLE_ID_V4_ALIASES)
+export {
+  summarizeValidators,
+  VALIDATOR_REGISTRY,
+} from './validator-registry.js';
+export type {
+  ValidatorId,
+  ValidatorResult,
+  ValidatorSeverity,
+  ValidatorSpec,
+  ValidatorSummary,
+} from './validator-registry.js';
+
+export { INGESTION_CONTRACTS, validateIngestion } from './ingestion-contract.js';
+export type {
+  AmaruIngestType,
+  IngestionContract,
+  IngestionTarget,
+  IngestionValidationError,
+  LoopProfile,
+  RequiredOutput,
+  SentraIngestType,
+} from './ingestion-contract.js';
+
+export {
+  INNOVATION_ENGINE_DEFAULT,
+  INNOVATION_LOOPS,
+  validateInnovationEngine,
+} from './innovation-engine.js';
+export type {
+  InnovationEngineState,
+  InnovationLoopId,
+  InnovationLoopSpec,
+} from './innovation-engine.js';
+
+export { OUTPUT_PATHS, resolveOutputPath } from './output-paths.js';
+export type { OutputPathKey } from './output-paths.js';
