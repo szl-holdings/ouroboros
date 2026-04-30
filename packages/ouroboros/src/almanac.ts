@@ -59,6 +59,22 @@ export const V3_CYCLES: readonly CycleConfig[] = Object.freeze([
   }) as CycleConfig,
 ]);
 
+/**
+ * v4 cycles — same set as V3_CYCLES. v4 renamed `paris_long_cycle` to
+ * `paris_cadence_cycle` in the spec text. The CYCLE_ID_V4_ALIASES map
+ * lets receipt-normalization tools translate between the two names; the
+ * cycle behavior (interval 3) is unchanged.
+ */
+export const V4_CYCLES: readonly CycleConfig[] = V3_CYCLES;
+
+export const CYCLE_ID_V4_ALIASES: Readonly<Record<string, CycleId>> = Object.freeze({
+  paris_cadence_cycle: 'paris_long_cycle',
+  paris_long_cycle: 'paris_long_cycle',
+  madrid_almanac_cycle: 'madrid_almanac_cycle',
+  grolier_schedule_cycle: 'grolier_schedule_cycle',
+  review_cycle: 'review_cycle',
+});
+
 export type AlmanacState = Readonly<Record<CycleId, number>>;
 
 export const INITIAL_ALMANAC_STATE: AlmanacState = Object.freeze({
