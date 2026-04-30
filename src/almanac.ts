@@ -20,27 +20,27 @@ export type CycleId =
   | 'grolier_schedule_cycle';
 
 export interface CycleConfig {
-  cycleId: CycleId;
-  purpose: string;
-  stepInterval: number;
+  readonly cycleId: CycleId;
+  readonly purpose: string;
+  readonly stepInterval: number;
 }
 
-export const DEFAULT_CYCLES: Readonly<CycleConfig[]> = Object.freeze([
-  {
+export const DEFAULT_CYCLES: readonly CycleConfig[] = Object.freeze([
+  Object.freeze({
     cycleId: 'madrid_almanac_cycle',
     purpose: 'short_horizon_review_and_task_rotation',
     stepInterval: 1,
-  },
-  {
+  }) as CycleConfig,
+  Object.freeze({
     cycleId: 'paris_long_cycle',
     purpose: 'long_horizon_cadence_and_periodic_reassessment',
     stepInterval: 3,
-  },
-  {
+  }) as CycleConfig,
+  Object.freeze({
     cycleId: 'grolier_schedule_cycle',
     purpose: 'predetermined_schedule_constraints',
     stepInterval: 2,
-  },
+  }) as CycleConfig,
 ]);
 
 export type AlmanacState = Readonly<Record<CycleId, number>>;
