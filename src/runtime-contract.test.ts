@@ -108,6 +108,37 @@ describe('risk-tier escalation gate', () => {
   });
 });
 
+describe('contract tables are deeply immutable (replay-safe)', () => {
+  it('PROOF_ROUTES nested arrays cannot be mutated at runtime', () => {
+    expect(() => {
+      // @ts-expect-error — runtime check that array mutation is rejected
+      PROOF_ROUTES.PRF_DATA_SYNC.requiredArtifacts.push('receipt');
+    }).toThrow();
+    expect(() => {
+      // @ts-expect-error — runtime check that field mutation is rejected
+      PROOF_ROUTES.PRF_SECURITY_ACTIONS.appliesTo = 'tampered';
+    }).toThrow();
+  });
+
+  it('RISK_TIERS policies cannot be mutated at runtime', () => {
+    expect(() => {
+      // @ts-expect-error — runtime check that field mutation is rejected
+      RISK_TIERS.R4_critical.forceEscalation = false;
+    }).toThrow();
+    expect(() => {
+      // @ts-expect-error — runtime check that field mutation is rejected
+      RISK_TIERS.R3_high.requiresManualApproval = false;
+    }).toThrow();
+  });
+
+  it('DEFAULT_CYCLES entries cannot be mutated at runtime', () => {
+    expect(() => {
+      // @ts-expect-error — runtime check that field mutation is rejected
+      DEFAULT_CYCLES[0].stepInterval = 99;
+    }).toThrow();
+  });
+});
+
 describe('almanac cycle advancer', () => {
   it('advances madrid every step, paris every 3 steps, grolier every 2 steps', () => {
     const after = rebuildAlmanac(6);
