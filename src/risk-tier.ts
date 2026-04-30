@@ -16,43 +16,43 @@
 export type RiskTier = 'R1_low' | 'R2_moderate' | 'R3_high' | 'R4_critical';
 
 export interface RiskTierPolicy {
-  tier: RiskTier;
-  description: string;
-  requiresManualApproval: boolean;
-  receiptRequired: boolean;
-  forceEscalation: boolean;
+  readonly tier: RiskTier;
+  readonly description: string;
+  readonly requiresManualApproval: boolean;
+  readonly receiptRequired: boolean;
+  readonly forceEscalation: boolean;
 }
 
 export const RISK_TIERS: Readonly<Record<RiskTier, RiskTierPolicy>> = Object.freeze({
-  R1_low: {
+  R1_low: Object.freeze({
     tier: 'R1_low',
     description: 'Low-risk informational tasks',
     requiresManualApproval: false,
     receiptRequired: true,
     forceEscalation: false,
-  },
-  R2_moderate: {
+  }),
+  R2_moderate: Object.freeze({
     tier: 'R2_moderate',
     description: 'Operational tasks with limited consequence',
     requiresManualApproval: false,
     receiptRequired: true,
     forceEscalation: false,
-  },
-  R3_high: {
+  }),
+  R3_high: Object.freeze({
     tier: 'R3_high',
     description: 'High-consequence system actions or regulated recommendations',
     requiresManualApproval: true,
     receiptRequired: true,
     forceEscalation: false,
-  },
-  R4_critical: {
+  }),
+  R4_critical: Object.freeze({
     tier: 'R4_critical',
     description:
       'Critical actions with security, financial, medical, or legal consequence',
     requiresManualApproval: true,
     receiptRequired: true,
     forceEscalation: true,
-  },
+  }),
 });
 
 export type RiskTierDecision =
