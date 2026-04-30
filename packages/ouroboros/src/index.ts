@@ -71,6 +71,8 @@ export type {
 //   - operational_modes         → ./operational-modes.js
 // Plus extends proof-route.ts with PRF_CLAIM_BOUND_RESEARCH and
 // PRF_OPERATIONAL_ACTION, and almanac.ts with the review_cycle.
+export { ROUTE_ID_V2_ALIASES } from './proof-route.js';
+
 export {
   dispatchDomainPack,
   DOMAIN_PACKS,
