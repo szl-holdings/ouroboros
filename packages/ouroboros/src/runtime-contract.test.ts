@@ -184,10 +184,11 @@ describe('almanac cycle advancer', () => {
 });
 
 describe('v3 proof routes', () => {
-  it('exposes PRF_CLAIM_BOUND_RESEARCH with locator-bound artifacts', () => {
+  it('exposes PRF_CLAIM_BOUND_RESEARCH with v3 contract artifacts', () => {
     expect(PROOF_ROUTES.PRF_CLAIM_BOUND_RESEARCH.requiredArtifacts).toEqual([
       'source_binding',
-      'trace_locator',
+      'locator',
+      'trace_reference',
       'receipt',
     ]);
   });
@@ -198,6 +199,24 @@ describe('v3 proof routes', () => {
       'risk_tier',
       'receipt',
     ]);
+  });
+
+  it('routes research_claim and thesis_assertion to PRF_CLAIM_BOUND_RESEARCH', () => {
+    expect(resolveProofRoute({ kind: 'claim', category: 'research_claim' })?.routeId).toBe(
+      'PRF_CLAIM_BOUND_RESEARCH',
+    );
+    expect(resolveProofRoute({ kind: 'claim', category: 'thesis_assertion' })?.routeId).toBe(
+      'PRF_CLAIM_BOUND_RESEARCH',
+    );
+  });
+
+  it('routes operational_action and client_action to PRF_OPERATIONAL_ACTION', () => {
+    expect(resolveProofRoute({ kind: 'action', category: 'operational_action' })?.routeId).toBe(
+      'PRF_OPERATIONAL_ACTION',
+    );
+    expect(resolveProofRoute({ kind: 'action', category: 'client_action' })?.routeId).toBe(
+      'PRF_OPERATIONAL_ACTION',
+    );
   });
 });
 
@@ -296,6 +315,19 @@ describe('evidence pack contract', () => {
       'missing_sources',
       'missing_trace_id',
     ]);
+  });
+
+  it('flags a missing evidence pack id', () => {
+    const p = buildEvidencePack({
+      evidencePackId: '',
+      sourceIds: ['src-a'],
+      locators: ['s3://bucket/key'],
+      proofRouteId: 'PRF_CLAIM_BOUND_RESEARCH',
+      receiptId: 'rcpt-1',
+      traceId: 'trace-1',
+      riskTier: 'R2_moderate',
+    });
+    expect(validateEvidencePack(p)).toContain('missing_evidence_pack_id');
   });
 });
 
