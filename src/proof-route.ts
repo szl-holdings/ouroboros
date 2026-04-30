@@ -31,27 +31,31 @@ export type ProofArtifactKind =
   | 'consistency_score';
 
 export interface ProofRoute {
-  routeId: ProofRouteId;
-  appliesTo: string;
-  requiredArtifacts: ProofArtifactKind[];
+  readonly routeId: ProofRouteId;
+  readonly appliesTo: string;
+  readonly requiredArtifacts: readonly ProofArtifactKind[];
+}
+
+function freezeRoute(r: ProofRoute): ProofRoute {
+  return Object.freeze({ ...r, requiredArtifacts: Object.freeze([...r.requiredArtifacts]) });
 }
 
 export const PROOF_ROUTES: Readonly<Record<ProofRouteId, ProofRoute>> = Object.freeze({
-  PRF_SYSTEM_CLAIMS: {
+  PRF_SYSTEM_CLAIMS: freezeRoute({
     routeId: 'PRF_SYSTEM_CLAIMS',
     appliesTo: 'system_design_claims',
     requiredArtifacts: ['source_binding', 'trace_locator', 'receipt'],
-  },
-  PRF_SECURITY_ACTIONS: {
+  }),
+  PRF_SECURITY_ACTIONS: freezeRoute({
     routeId: 'PRF_SECURITY_ACTIONS',
     appliesTo: 'security_or_threat_actions',
     requiredArtifacts: ['validator_result', 'risk_tier', 'escalation_check', 'receipt'],
-  },
-  PRF_DATA_SYNC: {
+  }),
+  PRF_DATA_SYNC: freezeRoute({
     routeId: 'PRF_DATA_SYNC',
     appliesTo: 'data_merge_or_sync_actions',
     requiredArtifacts: ['source_priority_record', 'delta_log', 'consistency_score', 'receipt'],
-  },
+  }),
 });
 
 /**
