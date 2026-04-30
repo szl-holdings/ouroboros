@@ -281,8 +281,8 @@ describe('domain-pack dispatcher', () => {
     expect(decision.requiresOverride).toBe(false);
   });
 
-  it('exports the full 10-pack registry', () => {
-    expect(Object.keys(DOMAIN_PACKS)).toHaveLength(10);
+  it('exports the full pack registry (v3 base + v4 Sentra/Amaru = 12 packs)', () => {
+    expect(Object.keys(DOMAIN_PACKS)).toHaveLength(12);
   });
 });
 
