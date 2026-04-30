@@ -150,6 +150,26 @@ describe('v6 tool permission matrix', () => {
     ).toEqual({ allowed: false, reason: 'unknown_pack' });
   });
 
+  // The v6 contract only declares pack_permissions for 4 packs
+  // (A11oy_core, Sentra_pack, Amaru_pack, research_ops). Any other
+  // routed pack (finance_ops, legal_ops, government_workflows,
+  // property_ops) intentionally falls through to deny-by-default
+  // per the contract's `defaults.deny_by_default = true`. This test
+  // pins that expected behavior so future contract changes that
+  // expand pack coverage are caught here.
+  it('packs not declared in matrix deny-by-default (per contract defaults)', () => {
+    for (const packId of [
+      'finance_ops',
+      'legal_ops',
+      'government_workflows',
+      'property_ops',
+    ]) {
+      expect(
+        checkToolPermission({ packId, tool: 'retrieval_runtime' }),
+      ).toEqual({ allowed: false, reason: 'unknown_pack' });
+    }
+  });
+
   it('checkToolPermission requires approval for R3 mutating', () => {
     expect(
       checkToolPermission({
