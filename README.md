@@ -2,14 +2,13 @@
 
   > Bounded loops with measurable convergence as a system primitive — now with v6 ecosystem layer and government readiness module.
 
-  [![Tests](https://img.shields.io/badge/tests-1%2C372%2F1%2C372-2da44e?style=flat-square)](./packages/ouroboros)
+  [![Tests](https://img.shields.io/badge/tests-142%2F142-2da44e?style=flat-square)](./packages/ouroboros)
   [![v6 contract](https://img.shields.io/badge/contract-v6.1.0-2b6cb0?style=flat-square)](https://github.com/szl-holdings/ouroboros-thesis/blob/main/a11oy-ultimate-replit-payload.v6.json)
-  [![Paper v3](https://img.shields.io/badge/paper-v3.0.0%20Lutar%20Invariant-c4356b?style=flat-square)](https://github.com/szl-holdings/ouroboros-thesis/tree/main/papers/v3)
-  [![Zenodo v3](https://zenodo.org/badge/DOI/10.5281/zenodo.19951520.svg)](https://doi.org/10.5281/zenodo.19951520)
+  [![Adaptive depth](https://img.shields.io/badge/EntropyDepthAllocator-v3-805ad5?style=flat-square)](https://github.com/szl-holdings/ouroboros-thesis/blob/main/papers/ouroboros-thesis-v3.md)
   [![NYSTEC](https://img.shields.io/badge/NYSTEC%20audit-2026--04--30-805ad5?style=flat-square)](./docs/audit/szl-government-readiness.md)
   [![License](https://img.shields.io/badge/license-Proprietary-red?style=flat-square)](./LICENSE)
 
-  This package implements the **Ouroboros runtime** described in [`szl-holdings/ouroboros-thesis`](https://github.com/szl-holdings/ouroboros-thesis), including the **Lutar Invariant Λ** — a closed-form scalar in [0, 1] that aggregates nine independent runtime-trust axes (Cleanliness, Horizon, Resonance, Frustum, Geometry, Invariance, Moral, Being, Soul) into a single auditable number. See [v3 paper](https://doi.org/10.5281/zenodo.19951520) for the formal derivation. It generalizes the loop-language work of *Ouro LoopLM* (arXiv:2510.25741) from the model layer to the **system layer** — agent control planes, data-sync engines, security response loops.
+  This package implements the **Ouroboros runtime** described in [`szl-holdings/ouroboros-thesis`](https://github.com/szl-holdings/ouroboros-thesis). It generalizes the loop-language work of *Ouro LoopLM* (arXiv:2510.25741) from the model layer to the **system layer** — agent control planes, data-sync engines, security response loops.
 
   ## Modules
 
@@ -81,7 +80,7 @@
   pnpm exec vitest run --no-coverage
   ```
 
-  **1,372/1,372 passing** (925 TypeScript + 447 Python) — covers proof-route resolver, risk-tier gate, almanac cycle advancer, v6 services/halts/routing, permission matrix (deny-by-default pinned), sandbox policy (`class` wire-format pinned), agent-registry validation, every Lutar Invariant axis module (anchor + verifier, horizon, resonance, reconciliation, gauss + aristotle, blanca, oppenheimer, socrates, lara), and pinning tests for every cardinal fact in the government readiness audit. v6.1.0 adds 9 EntropyDepthAllocator pure-function and precedence tests covering Δ-witness, severity entropy, rolling soft-fail rate, all four verdict branches, the convergence-beats-entropy precedence rule, and bit-identical determinism.
+  **142/142 passing** — covers proof-route resolver, risk-tier gate, almanac cycle advancer, v6 services/halts/routing, permission matrix (deny-by-default pinned), sandbox policy (`class` wire-format pinned), agent-registry validation, and 28 pinning tests for every cardinal fact in the government readiness audit. v6.1.0 adds 9 EntropyDepthAllocator pure-function and precedence tests covering Δ-witness, severity entropy, rolling soft-fail rate, all four verdict branches, the convergence-beats-entropy precedence rule, and bit-identical determinism.
 
   ---
 
