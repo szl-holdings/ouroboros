@@ -165,6 +165,38 @@ export type {
 export { OUTPUT_PATHS, resolveOutputPath } from './output-paths.js';
 export type { OutputPathKey } from './output-paths.js';
 
+// ─── v4 validator FUNCTIONS (runnable implementations of VALIDATOR_REGISTRY) ──
+// Until v4, the validator registry was data-only (id + severity + rule text).
+// `v4-validators/` ships the 9 pure functions that compute `passed` from a
+// typed `RuntimeContext`. See packages/ouroboros/src/v4-validators/VALIDATORS.md
+// for the codex-aligned semantics.
+export {
+  valBudgetEnforcer,
+  valNoSilentMutation,
+  valProofRequired,
+  valRiskEscalation,
+  valApprovalForCriticalAction,
+  valSecurityProofRequired,
+  valSourcePriorityRequired,
+  valMergeSafety,
+  valConsistencyBeforeCommit,
+  VALIDATOR_FNS,
+  runValidators,
+  V4_VALIDATOR_IDS,
+} from './v4-validators/index.js';
+export type {
+  RuntimeContext,
+  RuntimeRiskTier,
+  RuntimeOperationalMode,
+  ApprovalSnapshot,
+  SourceCitation,
+  MergeAction,
+  ConsistencySnapshot,
+  MutationRecord,
+  ValidatorFn,
+  RunValidatorsResult,
+} from './v4-validators/index.js';
+
 // v6 ecosystem layer (a11oy_ultimate_replit_payload).
 // Adds shared runtime services list, halt-condition vocabulary, extended
 // task routing, tool permission matrix, secrets-broker spec, sandbox
