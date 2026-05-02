@@ -4,8 +4,8 @@
 **Repo:** szl-holdings/ouroboros
 **File:** packages/ouroboros/src/lutar-invariant-proof.test.ts
 **Total assertions:** 22
-**Passed:** 18
-**Failed:** 4
+**Passed:** 22
+**Failed:** 0
 
 ## Λ definition
 
@@ -17,9 +17,9 @@
 |---|---|---|---|---|
 | A1 | 4 | 4 | 0 | demonstrated |
 | A2 | 4 | 4 | 0 | demonstrated |
-| A3 | 4 | 2 | 2 | FAILED |
-| A4 | 4 | 3 | 1 | FAILED |
-| Boundary / sanity | 6 | 5 | 1 | FAILED |
+| A3 | 4 | 4 | 0 | demonstrated |
+| A4 | 4 | 4 | 0 | demonstrated |
+| Boundary / sanity | 6 | 6 | 0 | demonstrated |
 
 ## Per-test detail
 
@@ -39,9 +39,9 @@
 
 ### A3
 
-- ✗ A3 — Egyptian inspectability the standard weight set is a sum of distinct unit fractions
+- ✓ A3 — Egyptian inspectability the standard weight set is a sum of distinct unit fractions
 - ✓ A3 — Egyptian inspectability weight set is bit-exact reproducible (rational reconstruction)
-- ✗ A3 — Egyptian inspectability Λ under Egyptian weights matches a rational evaluator on rational inputs
+- ✓ A3 — Egyptian inspectability Λ under Egyptian weights matches a rational evaluator on rational inputs
 - ✓ A3 — Egyptian inspectability the equal-weight set 9 × (1/9) is also a valid Egyptian decomposition
 
 ### A4
@@ -49,7 +49,7 @@
 - ✓ A4 — Page-curve concavity concavity along a line segment in [ε, 1]^9
 - ✓ A4 — Page-curve concavity concavity on a stress segment (one axis varying, others held)
 - ✓ A4 — Page-curve concavity Λ ≤ weighted arithmetic mean (AM–GM corollary)
-- ✗ A4 — Page-curve concavity Λ achieves arithmetic mean iff all axes equal (corollary)
+- ✓ A4 — Page-curve concavity Λ achieves arithmetic mean iff all axes equal (corollary)
 
 ### Boundary
 
@@ -58,7 +58,7 @@
 - ✓ Boundary and sanity Λ(degraded with one axis at 0.1) drops below arithmetic mean
 - ✓ Boundary and sanity Λ is symmetric under axis permutation when weights are uniform
 - ✓ Boundary and sanity axes are labeled as the thesis declares
-- ✗ Boundary and sanity weights sum to 1 (both standard sets)
+- ✓ Boundary and sanity weights sum to 1 (both standard sets)
 
 ## What this evidence does and does not establish
 

@@ -51,10 +51,11 @@ const W_EQUAL = Array(9).fill(1 / 9);
 
 /**
  * Egyptian unit-fraction weight set.
- * 1/3 + 1/3 + 1/9 + 1/9 + 1/9 + 1/27 + 1/27 + 1/27 + 1/27 = 1
+ * 1/3 + 1/3 + 1/9 + 1/27 + 1/27 + 1/27 + 1/27 + 1/27 + 1/27 = 1
+ *   2/3   +   1/9   +    6/27 = 18/27 + 3/27 + 6/27 = 27/27 = 1
  * Verified below in axiom A3.
  */
-const W_EGYPTIAN = [1/3, 1/3, 1/9, 1/9, 1/9, 1/27, 1/27, 1/27, 1/27];
+const W_EGYPTIAN = [1/3, 1/3, 1/9, 1/27, 1/27, 1/27, 1/27, 1/27, 1/27];
 
 /** A perfectly trustworthy run — every axis 1.0. */
 const X_PERFECT = Array(9).fill(1.0);
@@ -143,10 +144,10 @@ describe('A2 — Zero-pinning', () => {
 
 describe('A3 — Egyptian inspectability', () => {
   test('the standard weight set is a sum of distinct unit fractions', () => {
-    // 1/3 appears twice, 1/9 thrice, 1/27 four times.
+    // 1/3 appears twice, 1/9 once, 1/27 six times.
     // The axiom requires representability — each fraction is a unit
     // fraction (1/n with n a positive integer); the multiset sums to 1.
-    const denominators = [3, 3, 9, 9, 9, 27, 27, 27, 27];
+    const denominators = [3, 3, 9, 27, 27, 27, 27, 27, 27];
     const sum = denominators.reduce((acc, d) => acc + 1 / d, 0);
     expect(sum).toBeCloseTo(1, 12);
     for (const d of denominators) {
@@ -158,7 +159,7 @@ describe('A3 — Egyptian inspectability', () => {
   test('weight set is bit-exact reproducible (rational reconstruction)', () => {
     // Reconstruct each weight from its denominator and verify equality
     // across two independent computation paths.
-    const denominators = [3, 3, 9, 9, 9, 27, 27, 27, 27];
+    const denominators = [3, 3, 9, 27, 27, 27, 27, 27, 27];
     const path1 = denominators.map(d => 1 / d);
     const path2 = denominators.map(d => Math.exp(Math.log(1) - Math.log(d)));
     for (let i = 0; i < 9; i++) {

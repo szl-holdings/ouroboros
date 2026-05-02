@@ -2,7 +2,7 @@
 
   > Bounded loops with measurable convergence as a system primitive — now with v6 ecosystem layer and government readiness module.
 
-  [![Tests](https://img.shields.io/badge/tests-168%2F172-2da44e?style=flat-square)](./packages/ouroboros)
+  [![Tests](https://img.shields.io/badge/tests-172%2F172-2da44e?style=flat-square)](./packages/ouroboros)
   [![v6 contract](https://img.shields.io/badge/contract-v6.1.0-2b6cb0?style=flat-square)](https://github.com/szl-holdings/ouroboros-thesis/blob/main/a11oy-ultimate-replit-payload.v6.json)
   [![Paper v3](https://img.shields.io/badge/paper-v3.0.0%20Lutar%20Invariant-c4356b?style=flat-square)](https://github.com/szl-holdings/ouroboros-thesis/tree/main/papers/v3)
   [![Zenodo v3](https://zenodo.org/badge/DOI/10.5281/zenodo.19951520.svg)](https://doi.org/10.5281/zenodo.19951520)
@@ -77,7 +77,7 @@
   pnpm exec vitest run --no-coverage
   ```
 
-  **168/172 passing** (TypeScript / vitest) — covers the runtime contract, government readiness module, v6 services/halts/routing, permission matrix, sandbox policy, agent-registry validation, and the v4 runtime contract. The depth allocator is exercised inside the v4 runtime-contract suite; loop-kernel, types, consistency, and risk-tier ship as supporting modules referenced by the contract tests.
+  **172/172 passing** (TypeScript / vitest) — covers the runtime contract, government readiness module, v6 services/halts/routing, permission matrix, sandbox policy, agent-registry validation, and the v4 runtime contract. The depth allocator is exercised inside the v4 runtime-contract suite; loop-kernel, types, consistency, and risk-tier ship as supporting modules referenced by the contract tests.
 
   ---
 
