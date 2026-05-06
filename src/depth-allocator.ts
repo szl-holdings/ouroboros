@@ -97,8 +97,8 @@ function classifyTrajectory(d: number[]): AllocatorOutput['trajectory'] {
   let ups = 0;
   let flats = 0;
   for (let i = 1; i < series.length; i++) {
-    const prev = series[i - 1]!;
-    const cur = series[i]!;
+    const prev = series[i - 1] ?? 0;
+    const cur = series[i] ?? 0;
     const eps = Math.max(prev, cur, 1e-9) * 0.05;
     if (cur < prev - eps) downs++;
     else if (cur > prev + eps) ups++;

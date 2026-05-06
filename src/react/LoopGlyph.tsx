@@ -60,10 +60,13 @@ export function LoopGlyph({
         viewBox="0 0 100 100"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
+        role="img"
+        aria-labelledby="loop-glyph-title"
         style={{
           animation: spinning ? 'ouroboros-spin 8s linear infinite' : undefined,
         }}
       >
+        <title id="loop-glyph-title">{label}</title>
         {/* Lemniscate path: a figure-8 traced in one stroke */}
         <path
           d="M50,50 C 30,30 10,30 10,50 C 10,70 30,70 50,50 C 70,30 90,30 90,50 C 90,70 70,70 50,50 Z"
