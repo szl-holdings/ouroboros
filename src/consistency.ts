@@ -33,9 +33,11 @@ export function vectorConsistency(
   let na = 0;
   let nb = 0;
   for (let i = 0; i < a.length; i++) {
-    dot += a[i]! * b[i]!;
-    na += a[i]! * a[i]!;
-    nb += b[i]! * b[i]!;
+    const ai = a[i] ?? 0;
+    const bi = b[i] ?? 0;
+    dot += ai * bi;
+    na += ai * ai;
+    nb += bi * bi;
   }
   if (na === 0 || nb === 0) return 0;
   const cos = dot / (Math.sqrt(na) * Math.sqrt(nb));
@@ -70,13 +72,13 @@ export function stringConsistency(
   for (let i = 1; i <= m; i++) {
     let prev = 0;
     for (let j = 1; j <= n; j++) {
-      const tmp = dp[j]!;
+      const tmp = dp[j] ?? 0;
       if (a[i - 1] === b[j - 1]) dp[j] = prev + 1;
-      else dp[j] = Math.max(dp[j]!, dp[j - 1]!);
+      else dp[j] = Math.max(dp[j] ?? 0, dp[j - 1] ?? 0);
       prev = tmp;
     }
   }
-  const lcs = dp[n]!;
+  const lcs = dp[n] ?? 0;
   return (2 * lcs) / (m + n);
 }
 
