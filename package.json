@@ -51,8 +51,14 @@
     "lint:ci": "biome lint ./src",
     "format": "biome format --write ./src",
     "typecheck": "tsc -p tsconfig.json --noEmit",
+    "build": "tsc -p tsconfig.json",
     "test": "vitest run",
     "test:watch": "vitest"
+  },
+  "packageManager": "pnpm@10.26.1",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=10.0.0"
   },
   "license": "SEE LICENSE IN LICENSE",
   "repository": {
