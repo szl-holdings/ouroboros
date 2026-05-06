@@ -1,7 +1,7 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.4.14/schema.json",
   "vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
-  "files": { "include": ["src/**/*.{js,jsx,ts,tsx}"] },
+  "files": { "includes": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx"] },
   "linter": {
     "enabled": true,
     "rules": {
@@ -14,5 +14,12 @@
     "indentWidth": 2,
     "lineWidth": 100
   },
-  "organizeImports": { "enabled": true }
+  "assist": {
+    "enabled": true,
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  }
 }
