@@ -2,7 +2,7 @@
   "name": "@szl-holdings/ouroboros",
   "version": "1.0.0",
   "type": "module",
-  "description": "Ouroboros — bounded loops with measurable convergence as a system primitive. Kernel + adaptive depth + cross-step consistency + React trace UI. Inspired by ByteDance's Ouro LoopLM (arXiv:2510.25741), generalized to system layer.",
+  "description": "Ouroboros \u2014 bounded loops with measurable convergence as a system primitive. Kernel + adaptive depth + cross-step consistency + React trace UI. Inspired by ByteDance's Ouro LoopLM (arXiv:2510.25741), generalized to system layer.",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -43,7 +43,8 @@
     "@types/react": "^19.2.14",
     "react": "^19.2.5",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.5"
+    "vitest": "^4.1.5",
+    "@biomejs/biome": "^2.4.14"
   },
   "scripts": {
     "lint": "biome lint ./src",
