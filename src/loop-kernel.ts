@@ -82,14 +82,8 @@ export async function runLoop<S, O = unknown>(
 
   for (let i = 0; i < maxSteps; i++) {
     const stepStartedAt = nowMs();
-    let result: StepResult<S, O>;
-    try {
-      result = await step(state, i);
-    } catch (err) {
-      // Surface error as an aborted exit; let caller inspect via thrown error
-      // path is caller's responsibility — kernel never swallows errors.
-      throw err;
-    }
+    // Kernel never swallows errors — let any throw from step propagate to the caller.
+    const result: StepResult<S, O> = await step(state, i);
 
     if ('abort' in result && result.abort === true) {
       exitReason = 'aborted';
