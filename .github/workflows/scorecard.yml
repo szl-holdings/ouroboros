@@ -11,7 +11,9 @@ on:
     branches: [main]
   workflow_dispatch:
 
-permissions: read-all
+# Workflow-level permissions deliberately omitted so the job-level
+# write scopes (security-events, id-token) are not constrained by an
+# outer `read-all` ceiling, which produces a startup_failure.
 
 jobs:
   scorecard:
