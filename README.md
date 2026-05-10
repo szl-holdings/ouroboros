@@ -8,8 +8,30 @@
   [![DOI v2](https://img.shields.io/badge/DOI%20v2-10.5281%2Fzenodo.19934129-1f78b4?style=flat-square)](https://doi.org/10.5281/zenodo.19934129)
   [![DOI v1](https://img.shields.io/badge/DOI%20v1-10.5281%2Fzenodo.19867281-1f78b4?style=flat-square)](https://doi.org/10.5281/zenodo.19867281)
   [![License](https://img.shields.io/badge/license-Proprietary-red?style=flat-square)](./LICENSE)
+  [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/szl-holdings/ouroboros/badge)](https://securityscorecards.dev/viewer/?uri=github.com/szl-holdings/ouroboros)
 
   This package implements the **Ouroboros runtime** described in [`szl-holdings/ouroboros-thesis`](https://github.com/szl-holdings/ouroboros-thesis). It draws on, and generalizes to the system layer, prior work on adaptive computation in the language-model literature (Universal Transformers; PonderNet; Adaptive Computation Time).
+
+  ## Runtime architecture
+
+  ```mermaid
+  flowchart TD
+      classDef api fill:#01696F,stroke:#C8B26A,color:#F7F6F2;
+      classDef core fill:#1B474D,stroke:#01696F,color:#F7F6F2;
+      classDef gov fill:#28251D,stroke:#C8B26A,color:#F7F6F2;
+      classDef io fill:#F7F6F2,stroke:#01696F,color:#1B474D;
+
+      I["Caller / Platform API"]:::io
+      H["Halt Service<br/>bounded-iteration policy"]:::core
+      R["Routing Service<br/>policy-gated provider routing"]:::core
+      P["Permissions<br/>scope + tenant + role"]:::gov
+      S["Sandbox<br/>capability + egress policy"]:::gov
+      A["Agent Registry<br/>signed agent manifests"]:::core
+      L["Lambda Engine<br/>9-axis Lutar Invariant"]:::core
+      PR["Proof Chain<br/>append-only receipts"]:::api
+
+      I --> H --> R --> P --> S --> A --> L --> PR --> I
+  ```
 
   ## Citable record
 
