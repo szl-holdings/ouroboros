@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   ci:
-    uses: szl-holdings/.github/.github/workflows/reusable-node-ci.yml@main
+    uses: szl-holdings/.github/.github/workflows/reusable-node-ci.yml@c8359e53b40560f15ed5c25c3e4e1256b0536cf8 # v1 (.github main)
     with:
       node-version: '20'
       package-manager: 'pnpm'
@@ -25,22 +25,22 @@ jobs:
       actions: read
       contents: read
       security-events: write
-    uses: szl-holdings/.github/.github/workflows/reusable-codeql.yml@main
+    uses: szl-holdings/.github/.github/workflows/reusable-codeql.yml@c8359e53b40560f15ed5c25c3e4e1256b0536cf8 # v1 (.github main)
     with:
       languages: '["javascript-typescript"]'
 
   secrets:
-    uses: szl-holdings/.github/.github/workflows/reusable-secret-scan.yml@main
+    uses: szl-holdings/.github/.github/workflows/reusable-secret-scan.yml@c8359e53b40560f15ed5c25c3e4e1256b0536cf8 # v1 (.github main)
 
   dependency-review:
     if: github.event_name == 'pull_request'
     permissions:
       contents: read
       pull-requests: write
-    uses: szl-holdings/.github/.github/workflows/reusable-dependency-review.yml@main
+    uses: szl-holdings/.github/.github/workflows/reusable-dependency-review.yml@c8359e53b40560f15ed5c25c3e4e1256b0536cf8 # v1 (.github main)
 
   trivy:
     permissions:
       contents: read
       security-events: write
-    uses: szl-holdings/.github/.github/workflows/reusable-trivy.yml@main
+    uses: szl-holdings/.github/.github/workflows/reusable-trivy.yml@c8359e53b40560f15ed5c25c3e4e1256b0536cf8 # v1 (.github main)
