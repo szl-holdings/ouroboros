@@ -22,4 +22,4 @@ jobs:
       security-events: write
       id-token: write
       actions: read
-    uses: szl-holdings/.github/.github/workflows/reusable-scorecard.yml@c8359e53b40560f15ed5c25c3e4e1256b0536cf8 # v1 (.github main)
+    uses: szl-holdings/.github/.github/workflows/reusable-scorecard.yml@8186471f7f83f43f3aba4015fcfb2d322dcb4c83 # .github@8186471 fix scorecard permissions
