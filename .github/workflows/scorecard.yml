@@ -11,9 +11,20 @@ on:
     branches: [main]
   workflow_dispatch:
 
-# Workflow-level permissions deliberately omitted so the job-level
-# write scopes (security-events, id-token) are not constrained by an
-# outer `read-all` ceiling, which produces a startup_failure.
+# Explicit empty workflow-level permission grant.
+#
+# Why empty (`{}`) and not omitted: OpenSSF Scorecard's `Token-Permissions`
+# check requires a top-level `permissions:` block to be present, otherwise
+# the score is reduced (`no topLevel permission defined`). The block must
+# be empty here because a non-empty value (including `read-all`) would
+# clamp the job-level write scopes the Scorecard job actually needs
+# (`security-events: write` and `id-token: write` for SARIF upload + OIDC
+# attestation), causing the run to terminate with `startup_failure`.
+#
+# Empty `{}` satisfies both constraints: the top-level grant is present
+# (Scorecard check passes), and the inner ceiling is zero so jobs are
+# free to declare their own minimal scopes without being clamped.
+permissions: {}
 
 jobs:
   scorecard:
