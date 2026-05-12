@@ -2,11 +2,12 @@
 
   > Bounded loops with measurable convergence as a system primitive — the v6 ecosystem layer (services, halts, routing, permissions, sandbox, agent registry) plus a structured government-procurement readiness module.
 
-  [![Tests](https://img.shields.io/badge/tests-172%2F172-2da44e?style=flat-square)](./packages/ouroboros)
+  [![Tests](https://img.shields.io/badge/tests-218%2F218-2da44e?style=flat-square)](./packages/ouroboros)
   [![Release](https://img.shields.io/badge/release-v6.2.0-2b6cb0?style=flat-square)](https://github.com/szl-holdings/ouroboros/releases/tag/v6.2.0)
-  [![DOI v3 (current)](https://img.shields.io/badge/DOI%20v3-10.5281%2Fzenodo.19983066-1f78b4?style=flat-square)](https://doi.org/10.5281/zenodo.19983066)
-  [![DOI v2](https://img.shields.io/badge/DOI%20v2-10.5281%2Fzenodo.19934129-1f78b4?style=flat-square)](https://doi.org/10.5281/zenodo.19934129)
-  [![DOI v1](https://img.shields.io/badge/DOI%20v1-10.5281%2Fzenodo.19867281-1f78b4?style=flat-square)](https://doi.org/10.5281/zenodo.19867281)
+  [![Thesis](https://img.shields.io/badge/thesis-v1%E2%86%92v11%20published%20%C2%B7%20v12%20in%20review-805AD5?style=flat-square)](https://github.com/szl-holdings/ouroboros-thesis)
+  [![DOI v11](https://img.shields.io/badge/DOI%20v11-10.5281%2Fzenodo.20119582-1f78b4?style=flat-square)](https://doi.org/10.5281/zenodo.20119582)
+  [![Concept DOI](https://img.shields.io/badge/Concept%20DOI-10.5281%2Fzenodo.19944926-1f78b4?style=flat-square)](https://doi.org/10.5281/zenodo.19944926)
+  [![Lean](https://img.shields.io/badge/Lean%204-kernel--verified-2D5BB9?style=flat-square&logo=lean&logoColor=white)](https://github.com/szl-holdings/lutar-lean)
   [![License](https://img.shields.io/badge/license-Proprietary-red?style=flat-square)](./LICENSE)
   [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/szl-holdings/ouroboros/badge)](https://securityscorecards.dev/viewer/?uri=github.com/szl-holdings/ouroboros)
 
@@ -35,13 +36,33 @@
 
   ## Citable record
 
-  | Version | Status | DOI | Title |
+  The Ouroboros Thesis is a versioned series. The canonical paper line lives in [`szl-holdings/ouroboros-thesis`](https://github.com/szl-holdings/ouroboros-thesis); each Zenodo deposit is DOI-pinned.
+
+  | Version | Status | DOI | Notes |
   |---|---|---|---|
-  | **v3** (current) | Published 2026-05-02 | [10.5281/zenodo.19983066](https://doi.org/10.5281/zenodo.19983066) (concept [10.5281/zenodo.19944926](https://doi.org/10.5281/zenodo.19944926)) | The Loop Is the Product: Measuring Bounded Recursion as a System Primitive for Auditable AI |
+  | **v11** (current published) | Published 2026-05-09 | [10.5281/zenodo.20119582](https://doi.org/10.5281/zenodo.20119582) | The Λ-Ouroboros Substrate (consolidated) |
+  | v10 | Published 2026-05-07 | [10.5281/zenodo.20053163](https://doi.org/10.5281/zenodo.20053163) | — |
+  | v9 | Published 2026-05-07 | [10.5281/zenodo.20053148](https://doi.org/10.5281/zenodo.20053148) | — |
+  | v8 | Published 2026-05-05 | [10.5281/zenodo.20020849](https://doi.org/10.5281/zenodo.20020849) | — |
+  | v3 | Published 2026-05-02 | [10.5281/zenodo.19983066](https://doi.org/10.5281/zenodo.19983066) | The Loop Is the Product |
   | v2 | Published 2026-04-30 | [10.5281/zenodo.19934129](https://doi.org/10.5281/zenodo.19934129) | Empirical companion |
   | v1 | Published 2026-04-28 | [10.5281/zenodo.19867281](https://doi.org/10.5281/zenodo.19867281) | Position paper |
 
-  A Zenodo deposit reserved at `10.5281/zenodo.19951520` during a release-deletion sequence on 2026-05-02 was withdrawn (the record returns HTTP 410). The canonical v3 record is **19983066**.
+  Concept DOI (always resolves to latest): [10.5281/zenodo.19944926](https://doi.org/10.5281/zenodo.19944926).
+  v12 — *The Λ-Ouroboros Substrate — Four Machine-Verified Mechanisms* — is in review ([thesis PR #25](https://github.com/szl-holdings/ouroboros-thesis/pull/25)); v13 — *The Unified Ouroboros Spine* — is in writing on `paper-v13-thesis`.
+
+  ## Mechanisms (I–VI)
+
+  | # | Mechanism | Paper section | Lean | TypeScript |
+  |---|---|---|---|---|
+  | I | Λ-gate (9-axis Lutar Invariant) | v11 §3.1 | [`Lutar/Invariant.lean`](https://github.com/szl-holdings/lutar-lean/blob/main/Lutar/Invariant.lean) · [`Lutar/Bound.lean`](https://github.com/szl-holdings/lutar-lean/blob/main/Lutar/Bound.lean) | `packages/ouroboros-invariant` (platform) |
+  | II | Receipt chain (signed bounded recursion) | v11 §3.2 | — | `packages/ouroboros-guardrails` (platform) |
+  | III | Bekenstein gate (information-bounded admit) | v11 §3.3 | — | `packages/ouroboros-newton` (platform) |
+  | IV | Dual-witness verdict (MATCH/DIVERGE) | v11 §3.4 | — | `packages/ouroboros-loop` (platform) |
+  | V | Witness diversity (Gauss class-number gating) | v12 §4 | (statement) | `packages/ouroboros-gauss` + `ouroboros-loop` (platform) |
+  | VI | Reference-vector parity (bit-exact cross-runtime) | v13 (in writing) | [`RefVectors.lean`](https://github.com/szl-holdings/lutar-lean/blob/main/RefVectors.lean) | `packages/{a11oy,amaru,sentra}-runtime` (platform) |
+
+  Empirical benchmarks for mechanisms I–IV (Λ₉ p50 = 3.9 µs, receipt chain = 7,054/s, Bekenstein fires 38.3%, dual-witness 100% in tight regime) are reproduced by [`packages/ouroboros-integrations/bench/the-four.bench.ts`](https://github.com/szl-holdings/ouroboros/tree/main/packages/ouroboros-integrations/bench) in this repository's full v6.2 substrate.
 
   ## Modules
 
@@ -98,13 +119,15 @@
   pnpm exec vitest run --no-coverage
   ```
 
-  **172/172 passing** at v6.2.0 in the single `@szl-holdings/ouroboros` package, covering the proof-route resolver, the risk-tier escalation gate, the almanac cycle advancer, the v6 services / halts / routing / permission matrix (deny-by-default pinned) / sandbox policy (`class` wire-format pinned) / agent-registry validation, the `allocateDepth()` controller, and pinning tests for every cardinal fact in the government-readiness module.
+  **218/218 passing** in the `@szl-holdings/ouroboros` package (verified 2026-05-12), across 7 test files: proof-route resolver, risk-tier escalation gate, almanac cycle advancer, v6 services / halts / routing / permission matrix (deny-by-default pinned) / sandbox policy (`class` wire-format pinned) / agent-registry validation, `allocateDepth()` controller, `lutar-invariant-proof` Λ-bound and Λ-Egyptian-weight pins, and pinning tests for every cardinal fact in the government-readiness module.
 
   ## Status
 
   `v6.2.0` is the current release. `v6.1.0` introduced the `allocateDepth()` controller — a pure-function depth allocator over Δ-magnitude and validator entropy with verdicts `continue` / `early_exit_converged` / `early_exit_entropy` / `extend`. Opt-in via `loop_policy.adaptive_depth.enabled = true`; with the flag off, runs are bit-identical to v6.0.0.
 
-  The seven product surfaces (A11oy, Sentra, Amaru, Counsel, Terra, Vessels, Carlota Jo) live as a working multi-artifact monorepo in [`szl-holdings/szl-holdings-platform`](https://github.com/szl-holdings/szl-holdings-platform). The runtime is the open-source primitive that powers them.
+  The seven product surfaces (A11oy, Sentra, Amaru, Counsel, Terra, Vessels, Carlota Jo) live as a working multi-artifact monorepo in [`szl-holdings/platform`](https://github.com/szl-holdings/platform) (private; 1,220 tests across 76 packages, including the v6.2 substrate, the MCP gateway 27/27 e2e, dual-witness diversity, reference-vector parity, and per-runtime Λ-engine bit-exact assertions). The runtime is the open-source primitive that powers them.
+
+  **Companion proofs.** The Lean 4 machine-checked uniqueness proof of Λ_k lives in [`szl-holdings/lutar-lean`](https://github.com/szl-holdings/lutar-lean) — the kernel is the referee.
 
   ---
 
