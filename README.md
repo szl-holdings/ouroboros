@@ -62,7 +62,7 @@
   | V | Witness diversity (Gauss class-number gating) | v12 §4 | (statement) | `packages/ouroboros-gauss` + `ouroboros-loop` (platform) |
   | VI | Reference-vector parity (bit-exact cross-runtime) | v13 (in writing) | [`RefVectors.lean`](https://github.com/szl-holdings/lutar-lean/blob/main/RefVectors.lean) | `packages/{a11oy,amaru,sentra}-runtime` (platform) |
 
-  Empirical benchmarks for mechanisms I–IV (Λ₉ p50 = 3.9 µs, receipt chain = 7,054/s, Bekenstein fires 38.3%, dual-witness 100% in tight regime) are reproduced by [`packages/ouroboros-integrations/bench/the-four.bench.ts`](https://github.com/szl-holdings/ouroboros/tree/main/packages/ouroboros-integrations/bench) in this repository's full v6.2 substrate.
+  Empirical benchmarks for mechanisms I–IV are reproduced by [`packages/ouroboros-integrations/bench/the-four.bench.ts`](https://github.com/szl-holdings/ouroboros/tree/main/packages/ouroboros-integrations/bench) in this repository's full v6.2 substrate. Measured at commit `6c5c28366` (Node 24.0.0, N = 10,000 reps, mulberry32-seeded): Λ₉ p50 = **3.12 µs** (258k ops/sec); receipt build p50 = **11.5 µs** (62.8k ops/sec); receipt verify p50 = **10.4 µs** (74.1k ops/sec); receipt chain of 10k entries = **114.6 ms** at p50; Bekenstein indicator fires **49.5%** under uniform seed; dual-witness clean-channel agreement **100%** / noisy-channel agreement **43.6%** at τ = 0.40; V composed-effect at τ = 0.65 reduces error from **21.9% → 7.8%** (64.3% reduction, 70.4% admitted). Source artefact: [`packages/ouroboros-integrations/bench-data.json`](https://github.com/szl-holdings/ouroboros/tree/main/packages/ouroboros-integrations/bench-data.json).
 
   ## Modules
 
