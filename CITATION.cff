@@ -1,29 +1,29 @@
 cff-version: 1.2.0
-message: "If you use this software, please cite the SZL Holdings research thesis (Ouroboros Thesis v10) and reference this component."
-title: "ouroboros — Bounded-loop runtime implementing the Lutar Invariant. Reference implementation for the Ouroboros Thesis."
+message: "If you use this software, please cite it using the metadata below."
+title: "ouroboros — Bounded-loop runtime implementing the Lutar Invariant Λ. Audit-closure operator with sub-millisecond per-request overhead."
 abstract: >-
-  Bounded-loop runtime implementing the Lutar Invariant. Reference implementation for the Ouroboros Thesis. Component of the SZL Holdings governed AI decision infrastructure,
+  Bounded-loop runtime implementing the Lutar Invariant Λ. Audit-closure operator with sub-millisecond per-request overhead. Part of the SZL Holdings governed AI decision infrastructure,
   built on the Ouroboros Thesis (DOI 10.5281/zenodo.19944926).
 type: software
+version: "1.0.0"
+date-released: "2026-01-01"
+license: Apache-2.0
 authors:
   - family-names: Lutar
     given-names: Stephen
-    name-particle: P.
-    affiliation: SZL Holdings
+    name-particle: "P."
+    name-suffix: "Jr."
+    affiliation: "SZL Holdings"
+    email: "stephen@szlholdings.com"
     orcid: "https://orcid.org/0009-0001-0110-4173"
-license: Apache-2.0
 url: "https://github.com/szl-holdings/ouroboros"
 repository-code: "https://github.com/szl-holdings/ouroboros"
 keywords:
   - szl-holdings
   - ai-governance
-  - decision-intelligence
   - ouroboros-thesis
 identifiers:
-  - description: "Ouroboros Thesis v10 — research foundation (Zenodo)"
-    type: doi
-    value: "10.5281/zenodo.20053163"
-  - description: "Ouroboros Thesis concept DOI — always-latest"
+  - description: "Ouroboros Thesis — research foundation (Zenodo concept DOI)"
     type: doi
     value: "10.5281/zenodo.19944926"
   - description: "ORCID iD of the principal author"
@@ -31,12 +31,14 @@ identifiers:
     value: "https://orcid.org/0009-0001-0110-4173"
 preferred-citation:
   type: software
-  title: "ouroboros — Bounded-loop runtime implementing the Lutar Invariant. Reference implementation for the Ouroboros Thesis."
+  title: "ouroboros — Bounded-loop runtime implementing the Lutar Invariant Λ. Audit-closure operator with sub-millisecond per-request overhead."
   authors:
     - family-names: Lutar
       given-names: Stephen
-      name-particle: P.
-      affiliation: SZL Holdings
+      name-particle: "P."
+      name-suffix: "Jr."
+      affiliation: "SZL Holdings"
+      email: "stephen@szlholdings.com"
       orcid: "https://orcid.org/0009-0001-0110-4173"
   year: 2026
   url: "https://github.com/szl-holdings/ouroboros"
