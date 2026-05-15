@@ -12,6 +12,10 @@
   [![Lean](https://img.shields.io/badge/Lean%204-kernel--verified-2D5BB9?style=flat-square&logo=lean&logoColor=white)](https://github.com/szl-holdings/lutar-lean)
   [![License](https://img.shields.io/badge/license-Apache--2.0-blue?style=flat-square)](./LICENSE)
   [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/szl-holdings/ouroboros/badge)](https://securityscorecards.dev/viewer/?uri=github.com/szl-holdings/ouroboros)
+  [![anatomy:heart](https://img.shields.io/badge/anatomy-heart-01696F?style=flat-square)](docs/anatomy/heart.pdf)
+  [![anatomy:brain](https://img.shields.io/badge/anatomy-brain-01696F?style=flat-square)](docs/anatomy/brain.pdf)
+  [![anatomy:wires](https://img.shields.io/badge/anatomy-wires-01696F?style=flat-square)](docs/anatomy/wires.pdf)
+  [![anatomy:full_body](https://img.shields.io/badge/anatomy-full__body-01696F?style=flat-square)](docs/anatomy/full_body.pdf)
 
   This package implements the **Ouroboros runtime** described in [`szl-holdings/ouroboros-thesis`](https://github.com/szl-holdings/ouroboros-thesis). It draws on, and generalizes to the system layer, prior work on adaptive computation in the language-model literature (Universal Transformers; PonderNet; Adaptive Computation Time).
 
