@@ -3,12 +3,14 @@
   > Bounded loops with measurable convergence as a system primitive — the v6 ecosystem layer (services, halts, routing, permissions, sandbox, agent registry) plus a structured government-procurement readiness module.
 
   [![Tests](https://img.shields.io/badge/tests-218%2F218-2da44e?style=flat-square)](./packages/ouroboros)
-  [![Release](https://img.shields.io/badge/release-v6.2.0-2b6cb0?style=flat-square)](https://github.com/szl-holdings/ouroboros/releases/tag/v6.2.0)
-  [![Thesis](https://img.shields.io/badge/thesis-v1%E2%86%92v11%20published%20%C2%B7%20v12%20in%20review-805AD5?style=flat-square)](https://github.com/szl-holdings/ouroboros-thesis)
+  [![Release](https://img.shields.io/badge/release-v6.3.0-2b6cb0?style=flat-square)](https://github.com/szl-holdings/ouroboros/releases/tag/v6.3.0)
+  [![Thesis](https://img.shields.io/badge/thesis-v1%E2%86%92v13%20published-805AD5?style=flat-square)](https://github.com/szl-holdings/ouroboros-thesis)
   [![DOI v11](https://img.shields.io/badge/DOI%20v11-10.5281%2Fzenodo.20119582-1f78b4?style=flat-square)](https://doi.org/10.5281/zenodo.20119582)
+  [![DOI v12](https://img.shields.io/badge/DOI%20v12-10.5281%2Fzenodo.20173920-1f78b4?style=flat-square)](https://doi.org/10.5281/zenodo.20173920)
+  [![DOI v13](https://img.shields.io/badge/DOI%20v13-10.5281%2Fzenodo.20173912-1f78b4?style=flat-square)](https://doi.org/10.5281/zenodo.20173912)
   [![Concept DOI](https://img.shields.io/badge/Concept%20DOI-10.5281%2Fzenodo.19944926-1f78b4?style=flat-square)](https://doi.org/10.5281/zenodo.19944926)
   [![Lean](https://img.shields.io/badge/Lean%204-kernel--verified-2D5BB9?style=flat-square&logo=lean&logoColor=white)](https://github.com/szl-holdings/lutar-lean)
-  [![License](https://img.shields.io/badge/license-Proprietary-red?style=flat-square)](./LICENSE)
+  [![License](https://img.shields.io/badge/license-Apache--2.0-blue?style=flat-square)](./LICENSE)
   [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/szl-holdings/ouroboros/badge)](https://securityscorecards.dev/viewer/?uri=github.com/szl-holdings/ouroboros)
 
   This package implements the **Ouroboros runtime** described in [`szl-holdings/ouroboros-thesis`](https://github.com/szl-holdings/ouroboros-thesis). It draws on, and generalizes to the system layer, prior work on adaptive computation in the language-model literature (Universal Transformers; PonderNet; Adaptive Computation Time).
