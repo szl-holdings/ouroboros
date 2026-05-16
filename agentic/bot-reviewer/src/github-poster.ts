@@ -58,9 +58,18 @@ export function buildReviewBody(result: ReviewResult): string {
       "| # | Rule | File | Detail |",
       "|---|------|------|--------|",
     );
+    // Markdown table cell sanitization: escape backslash FIRST (CodeQL js/incomplete-sanitization),
+    // then pipe, then collapse newlines and backticks. Order matters — escaping pipe before
+    // backslash would re-escape our own added backslashes.
+    const escapeCell = (s: string): string =>
+      s
+        .replace(/\\/g, "\\\\")
+        .replace(/\|/g, "\\|")
+        .replace(/`/g, "\\`")
+        .replace(/\r?\n/g, " ");
     result.violations.forEach((v, idx) => {
-      const safeDetail = v.detail.replace(/\|/g, "\\|");
-      const safeFile = v.filePath.replace(/\|/g, "\\|");
+      const safeDetail = escapeCell(v.detail);
+      const safeFile = escapeCell(v.filePath);
       lines.push(`| ${idx + 1} | \`${v.rule}\` | \`${safeFile}\` | ${safeDetail} |`);
     });
   }
