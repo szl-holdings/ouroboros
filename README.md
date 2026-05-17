@@ -3,7 +3,7 @@
   > Bounded loops with measurable convergence as a system primitive — the v6 ecosystem layer (services, halts, routing, permissions, sandbox, agent registry) plus a structured government-procurement readiness module.
 
   [![Tests](https://img.shields.io/badge/tests-218%2F218-2da44e?style=flat-square)](./packages/ouroboros)
-  [![Release](https://img.shields.io/badge/release-v6.2.0-2b6cb0?style=flat-square)](https://github.com/szl-holdings/ouroboros/releases/tag/v6.2.0)
+  [![Release](https://img.shields.io/badge/release-v6.3.0-2b6cb0?style=flat-square)](https://github.com/szl-holdings/ouroboros/releases/tag/v6.3.0)
   [![Thesis](https://img.shields.io/badge/thesis-v1%E2%86%92v11%20published%20%C2%B7%20v12%20in%20review-805AD5?style=flat-square)](https://github.com/szl-holdings/ouroboros-thesis)
   [![DOI v11](https://img.shields.io/badge/DOI%20v11-10.5281%2Fzenodo.20119582-1f78b4?style=flat-square)](https://doi.org/10.5281/zenodo.20119582)
   [![Concept DOI](https://img.shields.io/badge/Concept%20DOI-10.5281%2Fzenodo.19944926-1f78b4?style=flat-square)](https://doi.org/10.5281/zenodo.19944926)
@@ -123,7 +123,7 @@
 
   ## Status
 
-  `v6.2.0` is the current release. `v6.1.0` introduced the `allocateDepth()` controller — a pure-function depth allocator over Δ-magnitude and validator entropy with verdicts `continue` / `early_exit_converged` / `early_exit_entropy` / `extend`. Opt-in via `loop_policy.adaptive_depth.enabled = true`; with the flag off, runs are bit-identical to v6.0.0.
+  `v6.3.0` is the current release — the Series A presentation-layer hardening pass (Apache-2.0 LICENSE, CITATION.cff, SECURITY.md, CONTRIBUTING.md, CODE_OF_CONDUCT.md, CODEOWNERS + branch protection, OpenSSF Scorecard, CodeQL, Dependabot, TruffleHog, SHA-pinned reusable workflows, pnpm 10). No behavioral substrate change vs. `v6.2.0`. `v6.1.0` introduced the `allocateDepth()` controller — a pure-function depth allocator over Δ-magnitude and validator entropy with verdicts `continue` / `early_exit_converged` / `early_exit_entropy` / `extend`. Opt-in via `loop_policy.adaptive_depth.enabled = true`; with the flag off, runs are bit-identical to v6.0.0.
 
   The seven product surfaces (A11oy, Sentra, Amaru, Counsel, Terra, Vessels, Carlota Jo) live as a working multi-artifact monorepo in [`szl-holdings/platform`](https://github.com/szl-holdings/platform) (private; 1,220 tests across 76 packages, including the v6.2 substrate, the MCP gateway 27/27 e2e, dual-witness diversity, reference-vector parity, and per-runtime Λ-engine bit-exact assertions). The runtime is the open-source primitive that powers them.
 
