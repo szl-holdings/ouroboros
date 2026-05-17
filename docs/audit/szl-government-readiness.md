@@ -1,6 +1,6 @@
 # SZL Holdings — A11oy, Sentra & Amaru: Exhaustive Audit & Government Readiness Report
 
-**Prepared by:** Stephen P. Lutar Jr. / SZL Consulting LTD  
+**Prepared by:** Stephen P. Lutar / SZL Consulting LTD  
 **Meeting:** Empire APEX Accelerator – NYSTEC (Mercy McInnis, Procurement Counselor)  
 **Date:** April 30, 2026  
 **Classification:** Pre-Briefing — Government Sales Readiness
