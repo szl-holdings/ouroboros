@@ -66,8 +66,9 @@ export function createServer(): http.Server {
 
       send(res, 404, { error: "not found" });
     } catch (err) {
-      const msg = err instanceof Error ? err.message : String(err);
-      send(res, 400, { error: msg });
+      // Log full error server-side for ops, but never leak details to caller (CWE-209).
+      console.error("[lambda-gate] request error:", err);
+      send(res, 400, { error: "bad request" });
     }
   });
 }
