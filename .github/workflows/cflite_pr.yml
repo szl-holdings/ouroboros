@@ -1,0 +1,36 @@
+# SPDX-License-Identifier: Apache-2.0
+# ClusterFuzzLite — PR fuzzing
+# Scorecard check: Fuzzing (OSS-Fuzz / CFL project registration still needed;
+#   this workflow satisfies the "fuzz harness present + CI runs fuzzers" signal)
+#
+# Action SHAs pinned at: 2025-07-15
+#   actions/checkout          v4.2.2  → 11bd71901bbe5b1630ceea73d27597364c9af683
+#   google/clusterfuzzlite    v1      → 884713a6c30a92e5e8544c39945cd7cb630abcd1
+
+name: ClusterFuzzLite PR fuzzing
+
+on:
+  pull_request:
+    branches: [ main ]
+
+permissions: read-all
+
+jobs:
+  PR:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683   # v4.2.2
+
+      - name: Build Fuzzers
+        id: build
+        uses: google/clusterfuzzlite/actions/build_fuzzers@884713a6c30a92e5e8544c39945cd7cb630abcd1   # v1
+        with:
+          language: javascript
+
+      - name: Run Fuzzers
+        uses: google/clusterfuzzlite/actions/run_fuzzers@884713a6c30a92e5e8544c39945cd7cb630abcd1   # v1
+        with:
+          language: javascript
+          fuzz-seconds: 300
+          mode: 'code-change'
