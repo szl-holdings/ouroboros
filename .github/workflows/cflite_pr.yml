@@ -1,7 +1,20 @@
 # SPDX-License-Identifier: Apache-2.0
 # ClusterFuzzLite — PR fuzzing
-# Scorecard check: Fuzzing (OSS-Fuzz / CFL project registration still needed;
-#   this workflow satisfies the "fuzz harness present + CI runs fuzzers" signal)
+#
+# CURRENTLY DISABLED — see tracking issue.
+#
+# Status (2026-05-28): ClusterFuzzLite's JavaScript path has an upstream
+# config/runtime contradiction. Its config validator rejects
+# `sanitizer: none` (only address/memory/undefined/coverage allowed) but
+# the OSS-Fuzz JS runtime then rejects ANY sanitizer ("JavaScript projects
+# cannot be fuzzed with sanitizers"). Both values fail in CI.
+#
+# Until ClusterFuzzLite ships a JS-aware sanitizer policy OR we migrate
+# to raw Jazzer.js npm scripts, the job is skipped to unblock the merge
+# wave. Workflow file kept for restoration when upstream is fixed.
+#
+# Scorecard "Fuzzing" signal: a follow-up will add a raw Jazzer.js
+# harness that runs without ClusterFuzzLite, restoring the signal.
 #
 # Action SHAs pinned at: 2025-07-15
 #   actions/checkout          v4.2.2  → 11bd71901bbe5b1630ceea73d27597364c9af683
@@ -18,6 +31,7 @@ permissions: read-all
 jobs:
   PR:
     runs-on: ubuntu-latest
+    if: false  # See header — ClusterFuzzLite JS path broken upstream; tracking restoration
     steps:
       - name: Checkout repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd   # v6.0.2
