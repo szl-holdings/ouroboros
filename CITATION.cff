@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-message: "If you use this software, please cite it as: Ouroboros Runtime v6.3.0 — Lutar Invariant audit-closure system."
+message: "If you use this software, please cite it as: Ouroboros Runtime v6.3.0 — Lutar Invariant audit-closure system. Governance foundation: Ouroboros Thesis v17 (DOI 10.5281/zenodo.20431181)."
 title: "ouroboros — Bounded-loop runtime implementing the Lutar Invariant. Reference implementation for the Ouroboros Thesis."
 abstract: >-
   Bounded-loop runtime implementing the Lutar Invariant. Reference implementation for the Ouroboros Thesis. Component of the SZL Holdings governed AI decision infrastructure,
@@ -22,25 +22,12 @@ keywords:
   - decision-intelligence
   - ouroboros-thesis
 identifiers:
-  - description: "Ouroboros Thesis v10 — research foundation (Zenodo)"
-    type: doi
-    value: "10.5281/zenodo.20053163"
   - description: "Ouroboros Thesis concept DOI — always-latest"
     type: doi
     value: "10.5281/zenodo.19944926"
-  - description: "ORCID iD of the principal author"
-    type: other
-    value: "https://orcid.org/0009-0001-0110-4173"
-preferred-citation:
-  type: software
-  title: "ouroboros — Bounded-loop runtime implementing the Lutar Invariant. Reference implementation for the Ouroboros Thesis."
-  authors:
-    - family-names: Lutar
-      given-names: "Stephen P."
-      name-suffix: "Jr."
-
-      email: stephen@szlholdings.com
-      affiliation: SZL Holdings
-      orcid: "https://orcid.org/0009-0001-0110-4173"
-  year: 2026
-  url: "https://github.com/szl-holdings/ouroboros"
+  - description: "Ouroboros Thesis v17 — Wheeler · Shannon · QEC-Evolved Anatomy (Zenodo)"
+    type: doi
+    value: "10.5281/zenodo.20431181"
+  - description: "Ouroboros Thesis v10 — research foundation (Zenodo)"
+    type: doi
+    value: "10.5281/zenodo.20053163"
