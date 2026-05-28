@@ -1,7 +1,17 @@
 // SPDX-License-Identifier: Apache-2.0
 // Author: Lutar, Stephen P. | ORCID 0009-0001-0110-4173 | SZL Holdings
-// Module: ouroboros/lambda-gate  Thesis: TH1 (Λ-Gate)
+// Module: ouroboros/lambda-gate  Thesis: TH1 (Λ-Gate), TH11 (Bound)
 // Doctrine V6 preflight: ✓ (no forbidden patterns)
+//
+// Λ unification (fix/lambda-unification): the scalar Λ returned in
+// EvalResult.lambda is now the weighted geometric mean with Egyptian
+// unit-fraction weights, matching:
+//   - Thesis v14 §3.3 Theorem 1 (Uniqueness)
+//   - lutar-lean/Lutar/Invariant.lean
+//   - platform/packages/ouroboros-invariant/src/lutar-invariant-9.ts
+// The previous MIN-fold is retained as `weakestAxis(...)` for diagnostics
+// (i.e. "which axis is dragging the gate down?"). It is NOT Λ — see
+// ouroboros/docs/lambda-spec.md §3–§4 for the derivation.
 
 import { createHash } from "node:crypto";
 import { parseReceipt, type Receipt, type Axes } from "@szl/ouroboros-types";
@@ -22,29 +32,53 @@ export const CRITICAL_AXES: ReadonlyArray<keyof Axes> = [
 // ---------------------------------------------------------------------------
 
 export interface EvalResult {
+  /** Λ scalar: weighted geometric mean (canonical, see lambda-spec.md §1). */
   lambda:  number;
+  /** Diagnostic: the weakest axis value. NOT Λ. Useful for explaining refusals. */
+  weakestAxis: number;
   pass:    boolean;
   axes:    Axes;
   reasons: string[];
 }
 
-/** Compute composite Λ as the conjunctive MIN across all 9 axes.
- *  Doctrine V6: Λ is the WEAKEST axis — not the mean. A single failing axis
- *  must collapse Λ. Mean-based composites mask bottom-axis violations. */
+/** Compute the canonical Λ scalar: weighted geometric mean with Egyptian
+ *  unit-fraction weights (all weights = 1/k). Matches Lutar.Invariant.lean. */
 export function computeLambda(axes: Axes): number {
   const values = Object.values(axes) as number[];
+  if (values.length === 0) return 0;
+  for (const v of values) {
+    if (!Number.isFinite(v) || v < 0) return 0;
+    if (v === 0) return 0;
+  }
+  const k = values.length;
+  let logSum = 0;
+  for (const v of values) logSum += Math.log(v);
+  return Math.exp(logSum / k);
+}
+
+/** Diagnostic helper: minimum axis value. Surfaces "the failing axis" in
+ *  reasons / UIs. This is NOT the Λ scalar — see lambda-spec.md §4. */
+export function weakestAxis(axes: Axes): number {
+  const values = Object.values(axes) as number[];
+  if (values.length === 0) return 0;
   return Math.min(...values);
 }
 
 /**
- * Conjunctive AND gate:
+ * Conjunctive AND gate verdict (thesis §3.3 Definition 2):
  *  1. Every axis ≥ LAMBDA_THRESHOLD
  *  2. Critical axes (moralGrounding, measurabilityHonesty) ≥ CRITICAL_THRESHOLD
- *  3. Composite Λ ≥ LAMBDA_THRESHOLD
+ *  3. Composite Λ (geomean) ≥ LAMBDA_THRESHOLD
+ *
+ * Verdict semantics are unchanged from the prior MIN-based implementation
+ * for the case where all per-axis thresholds equal LAMBDA_THRESHOLD; the
+ * critical-axis check was always evaluated separately. The Λ scalar
+ * stored on the result now matches the thesis / Lean definition.
  */
 export function evaluateAxes(axes: Axes): EvalResult {
   const reasons: string[] = [];
   const lambda = computeLambda(axes);
+  const minAxis = weakestAxis(axes);
 
   for (const [key, val] of Object.entries(axes) as [keyof Axes, number][]) {
     if (val < LAMBDA_THRESHOLD) {
@@ -62,7 +96,7 @@ export function evaluateAxes(axes: Axes): EvalResult {
     reasons.push(`composite Λ=${lambda.toFixed(4)} < ${LAMBDA_THRESHOLD}`);
   }
 
-  return { lambda, pass: reasons.length === 0, axes, reasons };
+  return { lambda, weakestAxis: minAxis, axes, pass: reasons.length === 0, reasons };
 }
 
 // ---------------------------------------------------------------------------
