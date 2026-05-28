@@ -152,6 +152,20 @@ diagnostic helper, so callers that want to display "the failing axis"
 can still get it. The semantic gate verdict is unchanged: it remains the
 conjunctive AND over per-axis thresholds.
 
+## 7.1 Knot-invariant tag on transit (v15 §10.2 wiring)
+
+Every `gateTransit(...)` call now attaches a 16-hex-char `knotTag`
+field to its `GateTransitResult`, computed by `knotInvariantTag(axes,
+lambda)` in `ouroboros/runtime/lambda-gate/src/knot-tag.ts`. The tag is
+emitted for every transit — pass *or* fail — so audit pipelines can
+group receipts by Reidemeister-candidacy without re-running the gate.
+`verifyReceipt(hash)` re-emits the same tag and returns it on the
+`VerifyResult`; a mismatch between transit-time and verify-time tags
+would indicate a determinism break. The Lean obligation backing this
+runtime witness lives at
+`lutar-lean/Lutar/Knot/ReidemeisterConjecture.lean` (CONJECTURE; the
+tag is a candidate equivalence-class witness, not a proof).
+
 ## 8. References
 
 - Thesis v14 §3.3, Definition 2 + Theorem 1: `arxiv_pkg_v14/main.tex.md` lines 165–177.

@@ -155,5 +155,24 @@ describe("gateTransit + store + verifyReceipt", () => {
   it("verifyReceipt returns found=false for unknown hash", () => {
     const v = verifyReceipt("f".repeat(64));
     expect(v.found).toBe(false);
+    expect(v.knotTag).toBe("");
+  });
+
+  it("gateTransit emits a 16-hex-char knot-invariant tag", () => {
+    const result = gateTransit(makeRaw());
+    expect(result.knotTag).toMatch(/^[0-9a-f]{16}$/);
+  });
+
+  it("knotTag matches between gateTransit and verifyReceipt for the same receipt", () => {
+    const t = gateTransit(makeRaw());
+    const v = verifyReceipt(VALID_HASH);
+    expect(v.knotTag).toBe(t.knotTag);
+  });
+
+  it("gateTransit emits a knot-invariant tag even when the gate refuses", () => {
+    const failAxes = { ...PASSING_AXES, moralGrounding: 0.50 };
+    const result = gateTransit(makeRaw(failAxes, 0.50));
+    expect(result.stored).toBe(false);
+    expect(result.knotTag).toMatch(/^[0-9a-f]{16}$/);
   });
 });

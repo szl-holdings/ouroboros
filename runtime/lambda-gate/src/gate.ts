@@ -15,6 +15,7 @@
 
 import { createHash } from "node:crypto";
 import { parseReceipt, type Receipt, type Axes } from "@szl/ouroboros-types";
+import { knotInvariantTag } from "./knot-tag.js";
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -135,18 +136,24 @@ export interface GateTransitResult {
   receipt: Receipt;
   eval:    EvalResult;
   stored:  boolean;
+  /** v15 §10.2 knot-invariant tag for audit-Reidemeister equivalence
+   *  candidacy. See knot-tag.ts and docs/lambda-spec.md. */
+  knotTag: string;
 }
 
 /**
  * Evaluate a raw receipt candidate through the Λ-gate.
- * Stores it only when pass=true.
+ * Stores it only when pass=true. Emits a knot-invariant tag on every
+ * transit (pass or fail) so auditors can group receipts by Reidemeister
+ * candidacy without re-running the gate.
  */
 export function gateTransit(raw: unknown): GateTransitResult {
   const receipt = parseReceipt(raw);
   const evalResult = evaluateAxes(receipt.axes);
   const stored = evalResult.pass;
   if (stored) storeReceipt(receipt);
-  return { receipt, eval: evalResult, stored };
+  const knotTag = knotInvariantTag(receipt.axes, evalResult.lambda);
+  return { receipt, eval: evalResult, stored, knotTag };
 }
 
 // ---------------------------------------------------------------------------
@@ -158,12 +165,18 @@ export interface VerifyResult {
   pass:   boolean;
   lambda: number;
   reasons: string[];
+  /** Knot-invariant tag for the re-evaluated receipt. Empty string when
+   *  the receipt was not found. Identical to the tag emitted at original
+   *  transit time — a determinism check across the audit window. */
+  knotTag: string;
 }
 
 /** Retrieve a stored receipt by hash and re-run the gate evaluation. */
 export function verifyReceipt(hash: string): VerifyResult {
   const r = getReceipt(hash);
-  if (!r) return { found: false, pass: false, lambda: 0, reasons: ["not found"] };
-  const { eval: ev } = gateTransit(r);
-  return { found: true, pass: ev.pass, lambda: ev.lambda, reasons: ev.reasons };
+  if (!r) {
+    return { found: false, pass: false, lambda: 0, reasons: ["not found"], knotTag: "" };
+  }
+  const { eval: ev, knotTag } = gateTransit(r);
+  return { found: true, pass: ev.pass, lambda: ev.lambda, reasons: ev.reasons, knotTag };
 }
