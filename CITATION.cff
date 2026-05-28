@@ -21,6 +21,92 @@ keywords:
   - ai-governance
   - decision-intelligence
   - ouroboros-thesis
+  - banach-contraction
+  - babylonian-mathematics
+  - liu-hui-pi
+  - sexagesimal
+  - qhapaq-nan
+references:
+  - type: book
+    authors:
+      - family-names: Neugebauer
+        given-names: "O."
+    title: "The Exact Sciences in Antiquity"
+    year: 1957
+    publisher:
+      name: Dover Publications
+    edition: 2
+  - type: book
+    authors:
+      - family-names: Friberg
+        given-names: "J."
+    title: "A Remarkable Collection of Babylonian Mathematical Texts"
+    year: 2007
+    publisher:
+      name: Springer
+    isbn: "978-0-387-48977-3"
+  - type: book
+    authors:
+      - family-names: Høyrup
+        given-names: "J."
+    title: "Lengths, Widths, Surfaces: A Portrait of Old Babylonian Algebra and its Kin"
+    year: 2002
+    publisher:
+      name: Springer
+  - type: book
+    authors:
+      - family-names: Robson
+        given-names: "E."
+    title: "Mathematics in Ancient Iraq: A Social History"
+    year: 2008
+    publisher:
+      name: Princeton University Press
+    isbn: "978-0-691-09182-2"
+  - type: book
+    authors:
+      - family-names: Cullen
+        given-names: "C."
+    title: "Astronomy and Mathematics in Ancient China: the Zhou Bi Suan Jing"
+    year: 1996
+    publisher:
+      name: Cambridge University Press
+  - type: book
+    authors:
+      - family-names: Martzloff
+        given-names: "J.-C."
+    title: "A History of Chinese Mathematics"
+    year: 1997
+    publisher:
+      name: Springer
+    isbn: "978-3-540-33782-9"
+  - type: book
+    authors:
+      - family-names: Hyslop
+        given-names: "J."
+    title: "The Inka Road System"
+    year: 1984
+    publisher:
+      name: Academic Press
+    isbn: "978-0-12-363460-3"
+  - type: book
+    authors:
+      - family-names: Cerrón-Palomino
+        given-names: "R."
+    title: "Las lenguas de los incas: el puquina, el aimara y el quechua"
+    year: 2013
+    publisher:
+      name: Peter Lang
+    doi: "10.3726/978-3-653-02485-2"
+  - type: article
+    authors:
+      - family-names: Banach
+        given-names: "S."
+    title: "Sur les opérations dans les ensembles abstraits et leur application aux équations intégrales"
+    journal: "Fundamenta Mathematicae"
+    year: 1922
+    volume: 3
+    start: 133
+    end: 181
 identifiers:
   - description: "Ouroboros Thesis v10 — research foundation (Zenodo)"
     type: doi

@@ -20,7 +20,13 @@
     "runtime",
     "vitest",
     "szl-holdings",
-    "ouroboros"
+    "ouroboros",
+    "banach-contraction",
+    "babylonian-mathematics",
+    "liu-hui-pi",
+    "sexagesimal",
+    "qhapaq-nan",
+    "khipu-transduction"
   ],
   "communities": [
     {

@@ -1,0 +1,35 @@
+{
+  "name": "@szl/ouroboros-banach",
+  "version": "0.1.0",
+  "description": "SZL Holdings — Ouroboros runtime: Banach-contraction primitives (Babylonian/Heron iteration + Liu Hui polygon doubling). Lineage hook for TH12 ΛGateLID DPO stability.",
+  "type": "module",
+  "license": "Apache-2.0",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "vitest": "^1.6.0",
+    "@types/node": "^20.14.0"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./babylonian-iteration": {
+      "types": "./dist/babylonian-iteration.d.ts",
+      "import": "./src/babylonian-iteration.ts"
+    },
+    "./liu-hui-pi": {
+      "types": "./dist/liu-hui-pi.d.ts",
+      "import": "./src/liu-hui-pi.ts"
+    }
+  },
+  "files": ["dist", "src", "README.md", "LICENSE"]
+}
