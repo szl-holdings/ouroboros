@@ -142,3 +142,15 @@ The 13 substrate repos cross-link reciprocally. This footer is maintained by GH 
 - [`vsp-otel`](https://github.com/szl-holdings/vsp-otel) — OpenTelemetry exporter for Λ-axis spans
 
 Org page: [github.com/szl-holdings](https://github.com/szl-holdings) · Doctrine v6 · 11 axioms · 30 GREEN modules · v18.0 DOI [`10.5281/zenodo.20434276`](https://doi.org/10.5281/zenodo.20434276)
+
+
+---
+
+## What ouroboros Is NOT
+
+Doctrine v6 honest scoping:
+
+- **Not a general-purpose task scheduler.** ouroboros implements bounded-recursion governance for SZL domain verticals only.
+- **Not a replacement for the Lean proofs.** Runtime termination is enforced operationally; formal proof lives in `lutar-lean`.
+- **Not an autonomous decision-maker.** Every cycle requires human-in-the-loop confirmation via the Covenant Policy Engine.
+- **Not stable API.** v6.x is the current semver; breaking changes follow SemVer with CHANGELOG entries.
