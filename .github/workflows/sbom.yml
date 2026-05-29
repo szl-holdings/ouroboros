@@ -2,8 +2,7 @@ name: SBOM
 
 # CycloneDX + SPDX SBOM generation on every push to main and on tagged releases.
 # Calls the org-level reusable SBOM workflow (Anchore Syft + Trivy).
-# Reusable workflow pinned SHA: 7444587fdddd9e0c3a0cefc5f13da95759fa7e2f (.github main 2026-05-29)
-# Note: updated from c8359e53b405... which pre-dated reusable-sbom.yml being added.
+# Reusable workflow pinned SHA: c8359e53b40560f15ed5c25c3e4e1256b0536cf8 (2026-05-28)
 
 on:
   push:
@@ -23,7 +22,7 @@ concurrency:
 
 jobs:
   sbom:
-    uses: szl-holdings/.github/.github/workflows/reusable-sbom.yml@7444587fdddd9e0c3a0cefc5f13da95759fa7e2f # v1 (.github main)
+    uses: szl-holdings/.github/.github/workflows/reusable-sbom.yml@c8359e53b40560f15ed5c25c3e4e1256b0536cf8 # v1 (.github main)
     with:
       attach-to-release: true
     permissions:
