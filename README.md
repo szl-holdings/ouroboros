@@ -37,7 +37,7 @@ This repository's live demos, dataset mirror, and org showcase live on the [SZLH
 
 The runtime enforces the Lutar Invariant: every agent decision loop terminates with a
 Λ-score in \[0, 1\] satisfying the four-axiom characterisation (A1 monotone, A2 homogeneous,
-A3 Egyptian-exact, A4 bounded). Machine-checked uniqueness is established in
+A3 Egyptian-exact, A4 bounded). Λ uniqueness (TH10, `lutar_is_geomean`) is formally stated in Lean in
 [szl-holdings/lutar-lean](https://github.com/szl-holdings/lutar-lean)
 (DOI [10.5281/zenodo.20434308](https://doi.org/10.5281/zenodo.20434308)).
 
