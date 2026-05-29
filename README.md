@@ -23,16 +23,6 @@
 > Source for the published thesis is in [`szl-holdings/ouroboros-thesis`](https://github.com/szl-holdings/ouroboros-thesis).
 > Concept DOI (always-latest): [10.5281/zenodo.19944926](https://doi.org/10.5281/zenodo.19944926).
 
-## On Hugging Face
-
-This repository's live demos, dataset mirror, and org showcase live on the [SZLHOLDINGS Hugging Face org](https://huggingface.co/SZLHOLDINGS):
-
-| Surface | Hugging Face artifact |
-|---------|---------------------|
-| **Live demo** | [szl-showcase](https://huggingface.co/spaces/SZLHOLDINGS/szl-showcase) · [szl-cookbook-runner](https://huggingface.co/spaces/SZLHOLDINGS/szl-cookbook-runner) |
-| **Source mirror** | [ouroboros-source](https://huggingface.co/datasets/SZLHOLDINGS/ouroboros-source) |
-| **Org showcase** | [SZLHOLDINGS on Hugging Face](https://huggingface.co/SZLHOLDINGS) — 22 datasets · 19+ Spaces · 2 models |
-
 ## Mathematical Foundation
 
 The runtime enforces the Lutar Invariant: every agent decision loop terminates with a
