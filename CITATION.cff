@@ -1,6 +1,8 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it as: Ouroboros Runtime v6.3.0 — Lutar Invariant audit-closure system. Governance foundation: Ouroboros Thesis v17 (DOI 10.5281/zenodo.20431181)."
 title: "ouroboros — Bounded-loop runtime implementing the Lutar Invariant. Reference implementation for the Ouroboros Thesis."
+version: "6.3.0"
+date-released: "2026-05-29"
 abstract: >-
   Bounded-loop runtime implementing the Lutar Invariant. Reference implementation for the Ouroboros Thesis. Component of the SZL Holdings governed AI decision infrastructure,
   built on the Ouroboros Thesis (DOI 10.5281/zenodo.19944926).
