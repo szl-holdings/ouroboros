@@ -1,0 +1,28 @@
+name: Release Please
+
+# Automated changelog + release-PR management via Conventional Commits.
+# On every push to main, release-please maintains an open release PR that
+# accumulates changes. Merging the release PR creates a GitHub Release and
+# semver tag. Downstream jobs (SBOM attachment, signing) can trigger on
+# the release event.
+#
+# Reusable workflow: szl-holdings/.github/.github/workflows/reusable-release-please.yml
+# Pinned SHA: c8359e53b40560f15ed5c25c3e4e1256b0536cf8 (verified 2026-05-28)
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  release-please:
+    uses: szl-holdings/.github/.github/workflows/reusable-release-please.yml@c8359e53b40560f15ed5c25c3e4e1256b0536cf8 # v1 (.github main)
+    with:
+      release-type: node
+      package-name: ouroboros
+      target-branch: main
+    permissions:
+      contents: write      # create release PRs and tags
+      pull-requests: write # update release PR body
