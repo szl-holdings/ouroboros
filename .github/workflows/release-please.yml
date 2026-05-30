@@ -13,11 +13,8 @@ on:
   push:
     branches: [main]
 
-# Workflow-level permissions must include everything the reusable workflow needs.
-# The caller's workflow-level permissions gate what the callee can receive.
 permissions:
-  contents: write       # release-please creates PRs, tags, releases
-  pull-requests: write  # release-please updates the release PR body
+  contents: read
 
 jobs:
   release-please:
