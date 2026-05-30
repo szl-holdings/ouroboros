@@ -6,10 +6,13 @@
 [![Tests](https://github.com/szl-holdings/ouroboros/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/szl-holdings/ouroboros/actions/workflows/tests.yml)
 [![CodeQL](https://github.com/szl-holdings/ouroboros/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/szl-holdings/ouroboros/actions/workflows/codeql.yml)
 [![SBOM](https://github.com/szl-holdings/ouroboros/actions/workflows/sbom.yml/badge.svg?branch=main)](https://github.com/szl-holdings/ouroboros/actions/workflows/sbom.yml)
-[![SLSA 3](https://github.com/szl-holdings/ouroboros/actions/workflows/slsa.yml/badge.svg?branch=main)](https://github.com/szl-holdings/ouroboros/actions/workflows/slsa.yml)
+[![SLSA L1 (SBOM + DCO)](https://img.shields.io/badge/SLSA-L1_(SBOM_%2B_DCO)-0B1F3A.svg?style=flat-square)](https://slsa.dev/spec/v1.0/levels)
 [![DCO](https://github.com/szl-holdings/ouroboros/actions/workflows/dco.yml/badge.svg?branch=main)](https://github.com/szl-holdings/ouroboros/actions/workflows/dco.yml)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/szl-holdings/ouroboros/badge)](https://securityscorecards.dev/viewer/?uri=github.com/szl-holdings/ouroboros)
 [![ORCID](https://img.shields.io/badge/ORCID-0009--0001--0110--4173-A6CE39.svg?style=flat-square&logo=orcid&logoColor=white)](https://orcid.org/0009-0001-0110-4173)
+
+
+> **NOTE:** SLSA Level 1 (source + build provenance documented). L2/L3 require Sigstore + isolated builders (roadmap).
 
 > Bounded-loop runtime implementing the Lutar Invariant Λ — reference implementation for the Ouroboros Thesis governance framework.
 
