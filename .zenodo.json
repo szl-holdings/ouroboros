@@ -1,6 +1,6 @@
 {
-  "title": "ouroboros \u2014 Bounded-loop runtime implementing the Lutar Invariant \u039b. Audit-closure operator with sub-millisecond per-request overhead. 172/172 tests, Apache-2.0.",
-  "description": "Bounded-loop runtime implementing the Lutar Invariant \u039b. Audit-closure operator with sub-millisecond per-request overhead. 172/172 tests, Apache-2.0.",
+  "title": "ouroboros — Bounded-loop runtime implementing the Lutar Invariant Λ. Audit-closure operator with sub-millisecond per-request overhead. 218/218 tests, Apache-2.0.",
+  "description": "Bounded-loop runtime implementing the Lutar Invariant Λ. Audit-closure operator with sub-millisecond per-request overhead. 218/218 tests, Apache-2.0.",
   "upload_type": "software",
   "creators": [
     {
