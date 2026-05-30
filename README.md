@@ -15,8 +15,8 @@
 
 
 
-> **Frontier Capability** — first receipt-complete bounded-loop runtime with dual-witness closure.  
-> Every agent decision produces a COSE_Sign1-wrapped dual-witness receipt closing the verifiability gap between governance policy and execution trace.
+> Receipt-complete bounded-loop runtime with dual-witness closure.  
+> Every agent decision produces a COSE_Sign1-wrapped dual-witness receipt connecting governance policy to execution trace.
 
 > **Thesis cross-reference:** The mathematical foundations for this repository are developed
 > in the [Ouroboros Thesis v18.0](https://github.com/szl-holdings/ouroboros-thesis) (DOI [10.5281/zenodo.20434276](https://doi.org/10.5281/zenodo.20434276)).
@@ -31,7 +31,7 @@ This repository's live demos, dataset mirror, and org showcase live on the [SZLH
 |---------|---------------------|
 | **Live demo** | [szl-showcase](https://huggingface.co/spaces/SZLHOLDINGS/szl-showcase) · [szl-cookbook-runner](https://huggingface.co/spaces/SZLHOLDINGS/szl-cookbook-runner) |
 | **Source mirror** | [ouroboros-source](https://huggingface.co/datasets/SZLHOLDINGS/ouroboros-source) |
-| **Org showcase** | [SZLHOLDINGS on Hugging Face](https://huggingface.co/SZLHOLDINGS) — 24 datasets · 19+ Spaces · 2 models |
+| **Org showcase** | [SZLHOLDINGS on Hugging Face](https://huggingface.co/SZLHOLDINGS) — 27 Spaces · 31 datasets · 2 models |
 
 ## Mathematical Foundation
 
