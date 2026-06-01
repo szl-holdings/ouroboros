@@ -2,10 +2,14 @@
 
 # ∞ ouroboros
 
+<!-- series-a-badges (Doctrine v11) -->
+[![Dependabot](https://img.shields.io/badge/Dependabot-enabled-025E8C?style=flat-square&logo=dependabot&logoColor=white)](https://github.com/szl-holdings/ouroboros/security/dependabot)
+
+
 **λ-gate loop**
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20434276.svg)](https://doi.org/10.5281/zenodo.20434276) [![ORCID](https://img.shields.io/badge/ORCID-0009--0001--0110--4173-a6ce39?style=flat-square&logo=orcid&logoColor=white)](https://orcid.org/0009-0001-0110-4173)
-[![Doctrine](https://img.shields.io/badge/Doctrine-v7-7c5cff?style=flat-square)](https://github.com/szl-holdings/.github/blob/main/DOCTRINE_V7.md) [![SLSA](https://img.shields.io/badge/SLSA-L1_honest-22c55e?style=flat-square)](https://slsa.dev/spec/v1.0/levels)
+[![Doctrine](https://img.shields.io/badge/Doctrine-v11-3b82f6?style=flat-square)](https://github.com/szl-holdings/.github/blob/main/DOCTRINE_V11.md) [![SLSA](https://img.shields.io/badge/SLSA-L1_honest-22c55e?style=flat-square)](https://slsa.dev/spec/v1.0/levels)
 
 [Hugging Face](https://huggingface.co/SZLHOLDINGS) · [Demo](https://szlholdings-readme.static.hf.space/) · [GitHub Org](https://github.com/szl-holdings)
 
@@ -162,14 +166,14 @@ The 13 substrate repos cross-link reciprocally. This footer is maintained by GH 
 - [`agi-forecast`](https://github.com/szl-holdings/agi-forecast) — PAC-Bayes + Bekenstein governance-trajectory forecasts
 - [`vsp-otel`](https://github.com/szl-holdings/vsp-otel) — OpenTelemetry exporter for Λ-axis spans
 
-Org page: [github.com/szl-holdings](https://github.com/szl-holdings) · Doctrine v7 · 15 axioms (14 unique) · 749 declarations · 163 sorries · 32 GREEN modules · v18.0 DOI [`10.5281/zenodo.20434276`](https://doi.org/10.5281/zenodo.20434276)
+Org page: [github.com/szl-holdings](https://github.com/szl-holdings) · Doctrine v11 · 15 axioms (14 unique) · 749 declarations · 163 sorries · 32 GREEN modules · v18.0 DOI [`10.5281/zenodo.20434276`](https://doi.org/10.5281/zenodo.20434276)
 
 
 ---
 
 ## What ouroboros Is NOT
 
-Doctrine v7 honest scoping:
+Doctrine v11 honest scoping:
 
 - **Not a general-purpose task scheduler.** ouroboros implements bounded-recursion governance for SZL domain verticals only.
 - **Not a replacement for the Lean proofs.** Runtime termination is enforced operationally; formal proof lives in `lutar-lean`.
