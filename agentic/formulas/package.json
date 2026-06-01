@@ -7,7 +7,7 @@
   "exports": { ".": "./src/index.ts" },
   "scripts": { "test": "vitest run", "typecheck": "tsc --noEmit" },
   "devDependencies": {
-    "vitest": "^1.6.0",
+    "vitest": "^4.1.0",
     "typescript": "^5.4.0",
     "@types/node": "^20.0.0",
     "fast-check": "^3.19.0"
