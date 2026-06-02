@@ -36,7 +36,7 @@ We ask that you give us a reasonable opportunity to investigate and patch before
 
 ## Scope
 
-This policy covers all software published under `szl-holdings/*`. For the upstream Defense Unicorns ecosystem we contribute to (Iron Bank, UDS, Pepr, Zarf), please follow their respective security policies.
+This policy covers all software published under `szl-holdings/*`. For the upstream Defense Unicorns ecosystem we build on (UDS, Pepr, Zarf), please follow their respective security policies.
 
 In scope:
 
