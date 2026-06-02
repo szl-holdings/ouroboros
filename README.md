@@ -65,9 +65,9 @@ A3 Egyptian-exact, A4 bounded). Λ uniqueness (TH10, `lutar_is_geomean`) is form
 [szl-holdings/lutar-lean](https://github.com/szl-holdings/lutar-lean)
 (DOI [10.5281/zenodo.20434308](https://doi.org/10.5281/zenodo.20434308)).
 
-The Bekenstein bound constrains the maximum entropy of a decision receipt to
-`S ≤ 2πkRE/(ℏc)`, preventing unbounded information accumulation in audit fibers.
-[(Bekenstein, 1981)](https://doi.org/10.1103/PhysRevD.23.287)
+Every receipt payload is bounded by the GradeVec schema (9 axes × NNReal) and the
+COSE_Sign1 envelope structure. Payload size is contractually constrained by the
+receipt schema, not by a physical bound.
 
 ## Table of Contents
 
@@ -108,7 +108,7 @@ pnpm test
 Each decision loop emits a COSE_Sign1-wrapped receipt
 ([RFC 9052](https://www.rfc-editor.org/rfc/rfc9052)) carrying:
 - Λ score at loop exit.
-- Bekenstein-bound attestation.
+- Payload-size attestation (schema-bounded GradeVec + hash).
 - Dual-witness signatures.
 - Shannon entropy measure of the decision code.
 
@@ -162,7 +162,7 @@ The 13 substrate repos cross-link reciprocally. This footer is maintained by GH 
 - [`platform`](https://github.com/szl-holdings/platform) — composing monorepo (76 packages, 1,220 tests)
 - [`szl-brand`](https://github.com/szl-holdings/szl-brand) — anatomy + visual doctrine (PDFs hosted in-repo)
 - [`szl-cookbook`](https://github.com/szl-holdings/szl-cookbook) — governed-AI recipes
-- [`agi-forecast`](https://github.com/szl-holdings/agi-forecast) — PAC-Bayes + Bekenstein governance-trajectory forecasts
+- [`agi-forecast`](https://github.com/szl-holdings/agi-forecast) — PAC-Bayes governance-trajectory forecasts
 - [`vsp-otel`](https://github.com/szl-holdings/vsp-otel) — OpenTelemetry exporter for Λ-axis spans
 
 Org page: [github.com/szl-holdings](https://github.com/szl-holdings) · Doctrine v11 · 15 axioms (14 unique) · 749 declarations · 163 sorries · 32 GREEN modules · v18.0 DOI [`10.5281/zenodo.20434276`](https://doi.org/10.5281/zenodo.20434276)
