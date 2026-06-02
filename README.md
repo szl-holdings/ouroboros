@@ -55,7 +55,6 @@ This repository's live demos, dataset mirror, and org showcase live on the [SZLH
 | Surface | Hugging Face artifact |
 |---------|---------------------|
 | **Live demo** | [szl-showcase](https://huggingface.co/spaces/SZLHOLDINGS/szl-showcase) · [szl-cookbook-runner](https://huggingface.co/spaces/SZLHOLDINGS/szl-cookbook-runner) |
-| **Source mirror** | [ouroboros-source](https://huggingface.co/datasets/SZLHOLDINGS/ouroboros-source) |
 | **Org showcase** | [SZLHOLDINGS on Hugging Face](https://huggingface.co/SZLHOLDINGS) — 26 Spaces · 29 datasets · 2 models |
 
 ## Mathematical Foundation
