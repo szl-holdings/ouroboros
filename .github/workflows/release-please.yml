@@ -8,6 +8,11 @@ name: Release Please
 #
 # Reusable workflow: szl-holdings/.github/.github/workflows/reusable-release-please.yml
 # Pinned SHA: 1c5f538ed3b8fe284df98b453d0db94f7a600c41 (verified 2026-05-29)
+#
+# NOTE: `package-name` removed — deprecated in release-please-action v5 and not
+# accepted as an input by the reusable workflow. The PR-creation step also requires
+# "Allow GitHub Actions to create pull requests" enabled in
+# Settings → Actions → General (founder one-time action).
 
 on:
   push:
@@ -21,7 +26,6 @@ jobs:
     uses: szl-holdings/.github/.github/workflows/reusable-release-please.yml@1c5f538ed3b8fe284df98b453d0db94f7a600c41 # v1 (.github main)
     with:
       release-type: node
-      package-name: ouroboros
       target-branch: main
     permissions:
       contents: write      # create release PRs and tags
