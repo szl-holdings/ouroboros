@@ -1,3 +1,45 @@
+<!-- szl-investor-header -->
+<div align="center">
+
+# ouroboros
+
+### A runtime that keeps AI agents inside provable safety limits — every loop is bounded, witnessed, and produces a tamper-proof receipt.
+
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg?style=flat-square)](LICENSE) [![Build](https://github.com/szl-holdings/ouroboros/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/szl-holdings/ouroboros/actions/workflows/ci.yml) [![Doctrine v11](https://img.shields.io/badge/Doctrine-v11_LOCKED-3b82f6?style=flat-square)](https://github.com/szl-holdings/.github/tree/main/doctrine) [![SLSA](https://img.shields.io/badge/SLSA-L1_honest-22c55e?style=flat-square)](https://slsa.dev/spec/v1.0/levels)
+
+[Docs](https://docs.szlholdings.com) · [Quickstart](https://docs.szlholdings.com/quickstart) · [Live demo](https://szlholdings-readme.static.hf.space/) · [SZL Holdings](https://szlholdings.com)
+
+</div>
+
+## 💡 Why it matters
+
+Autonomous agents can run away or skip oversight. Ouroboros guarantees each agent decision stays within a governance budget and emits a signed, replayable record connecting the policy to what actually executed.
+
+## ▶️ Live demo
+
+**[Open the live demo →](https://szlholdings-readme.static.hf.space/)**
+
+[![demo screenshot](https://raw.githubusercontent.com/szl-holdings/szl-brand/main/kit/logos/png/kanchay-512.png)](https://szlholdings-readme.static.hf.space/)
+
+<sub>_Screenshot: SZL Holdings kanchay mark — replace with a live capture of the running surface._</sub>
+
+## ⚡ Quick start (30 seconds)
+
+```bash
+git clone https://github.com/szl-holdings/ouroboros.git
+cd ouroboros
+make quickstart   # or: see docs.szlholdings.com/quickstart
+```
+
+## 🔍 How it works
+
+In two sentences: this component is part of SZL's governed-AI mesh — it enforces policy and emits signed, replayable audit receipts so every AI action can be verified after the fact. The full mathematical foundation, formal proofs, and protocol details are documented below and in the [technical docs](https://docs.szlholdings.com).
+
+---
+
+<details>
+<summary><strong>📐 Full technical detail, math, and proofs (the proof, not the pitch)</strong></summary>
+
 <div align="center">
 
 # ∞ ouroboros
@@ -178,3 +220,16 @@ Doctrine v11 honest scoping:
 - **Not a replacement for the Lean proofs.** Runtime termination is enforced operationally; formal proof lives in `lutar-lean`.
 - **Not an autonomous decision-maker.** Every cycle requires human-in-the-loop confirmation via the Covenant Policy Engine.
 - **Not stable API.** v6.x is the current semver; breaking changes follow SemVer with CHANGELOG entries.
+
+
+</details>
+
+<!-- szl-doctrine-footer -->
+
+---
+
+### Citation & doctrine
+
+Cite this work via [`CITATION.cff`](CITATION.cff). Math foundations: [szl-papers](https://github.com/szl-holdings/szl-papers) · [lutar-lean](https://github.com/szl-holdings/lutar-lean) (kernel `c7c0ba17`).
+
+<sub>Λ Conjecture 1 (not a theorem) · 749/14/163 v11 LOCKED (kernel `c7c0ba17`) · SLSA L1 honest · Section 889 = 5 vendors · [SZL Holdings](https://szlholdings.com) · Apache-2.0 code · CC-BY-4.0 papers</sub>
