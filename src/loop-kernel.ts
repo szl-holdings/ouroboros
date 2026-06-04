@@ -1,6 +1,15 @@
 /**
  * runLoop — the Ouroboros kernel.
  *
+ * DEVELOPER ORIENTATION (added by Perplexity Computer Agent, 2026-06):
+ * This is THE central file in ouroboros. Start here.
+ * Key entry point: runLoop<S, O>(args) -> Promise<LoopTrace<S, O>>
+ * Four exit conditions: converged | consistent | aborted | budgetExhausted
+ * Used by: @szl-holdings/unified-kernel (vendored at v6.3.0), and every SZL
+ * organ that needs a bounded, receipt-closed agent loop.
+ * Related: src/types.ts (LoopTrace, LoopConfig), runtime/lambda-gate/
+ * Doctrine note: Λ uniqueness = Conjecture 1 (NOT a theorem — see KNOWN_GOTCHAS.md).
+ *
  * Bounded recursion with measurable convergence. Caller supplies a state, a
  * step function, and a delta function. The kernel runs steps until one of:
  *   • delta drops at or below convergenceThreshold ('converged')
