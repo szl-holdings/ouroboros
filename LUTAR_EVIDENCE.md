@@ -1,5 +1,14 @@
 # Lutar Invariant Λ — Empirical Axiom Evidence
 
+> ⚠️ **v3-ERA EVIDENCE (2026-05-02) — AXIOMS A2/A4 HAVE SINCE BEEN REDEFINED.**
+> This document tests the **v3 axiom set** (A2 = "zero-pinning", A4 = "page-curve
+> concavity"). At current `lutar-lean` HEAD `c7c0ba17` (v14+), **A2 = positive
+> homogeneity (degree 1, `IsHomogeneous`)** and **A4 = bounded-by-max
+> (`IsBounded`)** — mathematically distinct properties. The v3 results below do
+> **NOT** carry over to the current axiom set without re-verification. See
+> [`lutar-lean/Lutar/Axioms.lean`](https://github.com/szl-holdings/lutar-lean/blob/main/Lutar/Axioms.lean)
+> (v3-drift disclosure). Λ-uniqueness remains **Conjecture 1, never a theorem.**
+
 **Date:** 2026-05-02
 **Repo:** szl-holdings/ouroboros
 **File:** packages/ouroboros/src/lutar-invariant-proof.test.ts
