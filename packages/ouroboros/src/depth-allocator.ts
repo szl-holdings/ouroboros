@@ -1,5 +1,13 @@
 /**
- * EntropyDepthAllocator — Ouro's adaptive depth, generalized to system loops.
+ * TrajectoryDepthAllocator — Ouro's adaptive depth, generalized to system loops.
+ *
+ * HONEST NAMING (2026-06-05): this is a TRAJECTORY-PHASE depth heuristic, NOT an
+ * entropy estimator. It computes NO probability distribution and NO log-space
+ * summation (H = -Σ pᵢ log pᵢ is never evaluated). Earlier docs/branding called it
+ * an "EntropyDepthAllocator"; that name imported information-theoretic authority
+ * the mechanism does not have. Corrected per external review (Flyxion,
+ * "Convergence Without Ground", 2026-06-05, §4.1). The exported API is
+ * `allocateDepth` / `classifyTrajectory` — unchanged.
  *
  * Given a small set of "probe deltas" from the first 2-3 steps of a loop,
  * estimate how many steps this loop is likely to need, capped by the
@@ -7,8 +15,15 @@
  * delta is large or oscillating, and smaller budgets when the delta is
  * already small or monotonically shrinking.
  *
- * This is a heuristic, not a learned policy. It is the system-layer analog
- * of Ouro's entropy regularization: same goal, different signal.
+ * This is a HEURISTIC sign-change / monotonicity classifier over a recent delta
+ * window, not a learned policy and not an entropy estimator. KNOWN LIMITATIONS
+ * (disclosed, per review §4.1/§4.3): (1) it assumes the recent delta window is
+ * predictively sufficient for remaining depth (an unproven Markov-style
+ * assumption — a shrinking window may precede a saddle-point divergence); (2) at
+ * high stakes the oscillating budget saturates to maxSteps, so adaptivity is a
+ * fixed-depth policy in exactly the highest-stakes cells. "converged" is a
+ * delta-threshold MEASUREMENT, not a proof of correctness or robustness (see
+ * false-arrest falsifier F10).
  */
 
 export interface AllocatorInput {
