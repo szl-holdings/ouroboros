@@ -31,6 +31,31 @@
  *
  * No external deps. Lean-core-free TypeScript (Lean kernel numbers untouched;
  * Doctrine v11 749/14/163 unchanged; Λ remains Conjecture 1).
+ *
+ * GROUNDING (real, citable — the repairs do NOT depend on grey-literature)
+ * ----------------------------------------------------------------------
+ *  • Semantic sufficiency (critique Eq. 11, P(a|x)=P(a|π(x))) is exactly a
+ *    SUFFICIENT STATISTIC — Fisher–Neyman factorization (classical statistics).
+ *    π is "sufficient for task A" iff π(x) is a sufficient statistic for the
+ *    task posterior. Ref: Fisher–Neyman factorization theorem.
+ *  • F11 false-arrest perturbation testing is grounded in escape-saddle theory:
+ *    a true minimum is robust to small perturbations, a saddle/flat arrest is
+ *    not. Ref: Jin, Ge, Netrapalli, Kakade, Jordan, "How to Escape Saddle Points
+ *    Efficiently", ICML 2017 (PMLR v70). A converged trace ≈ first-order
+ *    stationary point; false arrest ≈ saddle/flat region.
+ *  • The requirement that the consistency audit be CAUSALLY INDEPENDENT of the
+ *    output it audits (else vacuous by identity — F10) is the non-interference
+ *    principle. Ref: Goguen & Meseguer, "Security Policies and Security Models",
+ *    IEEE S&P 1982.
+ *
+ * NAMING PROVENANCE (honest). The critique uses "CLIO" for this projection-audit
+ * role. In the originating RSVP corpus (Flyxion / standardgalactic, grey
+ * literature — no Zenodo DOI) "CLIO" actually names a coherence/repair operator;
+ * the projection/tiling role is their "TARTAN". We keep the filename `clio-audit`
+ * to match the critique's terminology, but the math here stands on classical
+ * sufficient-statistic theory, NOT on any specific RSVP/CLIO/MEM|8 result. The
+ * RSVP "admissibility-manifold curvature" and MEM|8 "transferability" objects are
+ * treated elsewhere as hypotheses, never as settled citations.
  */
 
 // ---------------------------------------------------------------------------
