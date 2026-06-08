@@ -86,8 +86,8 @@ In two sentences: this component is part of SZL's governed-AI mesh — it enforc
 > Every agent decision produces a COSE_Sign1-wrapped dual-witness receipt connecting governance policy to execution trace.
 
 > **Thesis cross-reference:** The mathematical foundations for this repository are developed
-> in the [Ouroboros Thesis v18.0](https://github.com/szl-holdings/ouroboros-thesis) (DOI [10.5281/zenodo.20434276](https://doi.org/10.5281/zenodo.20434276)).
-> Source for the published thesis is in [`szl-holdings/ouroboros-thesis`](https://github.com/szl-holdings/ouroboros-thesis).
+> in the Ouroboros Thesis v18.0 (DOI [10.5281/zenodo.20434276](https://doi.org/10.5281/zenodo.20434276)).
+> Source for the published thesis is in `szl-holdings/ouroboros-thesis`.
 > Concept DOI (always-latest): [10.5281/zenodo.19944926](https://doi.org/10.5281/zenodo.19944926).
 
 ## On Hugging Face
