@@ -97,15 +97,20 @@ This repository's live demos, dataset mirror, and org showcase live on the [SZLH
 | Surface | Hugging Face artifact |
 |---------|---------------------|
 | **Live demo** | [szl-showcase](https://huggingface.co/spaces/SZLHOLDINGS/szl-showcase) · [szl-cookbook-runner](https://huggingface.co/spaces/SZLHOLDINGS/szl-cookbook-runner) |
-| **Org showcase** | [SZLHOLDINGS on Hugging Face](https://huggingface.co/SZLHOLDINGS) — 26 Spaces · 29 datasets · 2 models |
+| **Org showcase** | [SZLHOLDINGS on Hugging Face](https://huggingface.co/SZLHOLDINGS) — live Spaces, datasets & models (see org page for current counts) |
 
 ## Mathematical Foundation
 
 The runtime enforces the Lutar Invariant: every agent decision loop terminates with a
 Λ-score in \[0, 1\] satisfying the four-axiom characterisation (A1 monotone, A2 homogeneous,
-A3 Egyptian-exact, A4 bounded). Λ uniqueness (TH10, `lutar_is_geomean`) is formally stated in Lean in
+A3 Egyptian-exact, A4 bounded). **Λ uniqueness is Conjecture 1, not a theorem:** the *unconditional*
+uniqueness claim is machine-checked **false** (`Round13.maxAgg_ne_Lambda` counterexample), and only the
+**conditional** CUT-2 slice-multiplicativity uniqueness is proven (`lambda_unique_of_separable`,
+axiom-free, 0 sorry, CI-green) in
 [szl-holdings/lutar-lean](https://github.com/szl-holdings/lutar-lean)
-(DOI [10.5281/zenodo.20434308](https://doi.org/10.5281/zenodo.20434308)).
+(DOI [10.5281/zenodo.20434308](https://doi.org/10.5281/zenodo.20434308)). The locked-proven PURIQ
+formulas number **exactly 5** {F1, F11, F12, F18, F19}; the broader experimental `main` corpus
+(≈1323 decls / 23 axioms / CI-green) is reported separately and never folded into the locked 5.
 
 Every receipt payload is bounded by the GradeVec schema (9 axes × NNReal) and the
 COSE_Sign1 envelope structure. Payload size is contractually constrained by the
