@@ -135,6 +135,7 @@ receipt schema, not by a physical bound.
 | `agentic/` | Agent harness and dual-witness emitters |
 | `packages/` | Scoped npm packages (`@szl/ouroboros-*`) |
 | `LUTAR_EVIDENCE.md` | Runtime parity evidence log (218 reference vectors) |
+| `OUROBOROS_RUN_ALL.py` | **Thesis-provenance artifact** (~1.4 MB, stdlib-only). All 25 Ouroboros Thesis modules (v14 → v19.0) concatenated into one self-testing file as a frozen historical record of the thesis grafts. **Not imported by the runtime** (`src/`, `runtime/`, `agentic/`, `packages/` are the live code) and intentionally excluded from the doctrine gate. Run standalone with `python3 OUROBOROS_RUN_ALL.py` to replay all module self-tests (exit 0 = all green). Kept for citation/provenance; do not import or refactor. |
 
 ## Quick Start
 
@@ -232,3 +233,4 @@ Doctrine v11 honest scoping:
 Cite this work via [`CITATION.cff`](CITATION.cff). Math foundations: [szl-papers](https://github.com/szl-holdings/szl-papers) · [lutar-lean](https://github.com/szl-holdings/lutar-lean) (kernel `c7c0ba17`).
 
 <sub>Λ Conjecture 1 (not a theorem) · 749/14/163 v11 LOCKED (kernel `c7c0ba17`) · SLSA L1 honest · Section 889 = 5 vendors · [SZL Holdings](https://a11oy.net) · Apache-2.0 code · CC-BY-4.0 papers</sub>
+
