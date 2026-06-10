@@ -109,8 +109,8 @@ uniqueness claim is machine-checked **false** (`Round13.maxAgg_ne_Lambda` counte
 axiom-free, 0 sorry, CI-green) in
 [szl-holdings/lutar-lean](https://github.com/szl-holdings/lutar-lean)
 (DOI [10.5281/zenodo.20434308](https://doi.org/10.5281/zenodo.20434308)). The locked-proven PURIQ
-formulas number **exactly 5** {F1, F11, F12, F18, F19}; the broader experimental `main` corpus
-(≈1323 decls / 23 axioms / CI-green) is reported separately and never folded into the locked 5.
+formulas number **exactly 8** {F1, F4, F7, F11, F12, F18, F19, F22}; the broader experimental `main` corpus
+(≈1323 decls / 23 axioms / CI-green) is reported separately and never folded into the locked 8.
 
 Every receipt payload is bounded by the GradeVec schema (9 axes × NNReal) and the
 COSE_Sign1 envelope structure. Payload size is contractually constrained by the
@@ -200,7 +200,7 @@ The substrate repos cross-link reciprocally. Links below point only to live repo
 - [`a11oy`](https://github.com/szl-holdings/a11oy) — governed command platform (policy · measurement · knowledge · QEC-integrity)
 - [`killinchu`](https://github.com/szl-holdings/killinchu) — drones & vessels counter-UAS Λ-gate
 - [`uds-mesh`](https://github.com/szl-holdings/uds-mesh) — UDS span schemas + governance receipts
-- [`lutar-lean`](https://github.com/szl-holdings/lutar-lean) — Lean 4 + Mathlib kernel proofs (5 locked theorems · 749 decl / 14 axioms / 163 sorries · canonical @ `c7c0ba17`)
+- [`lutar-lean`](https://github.com/szl-holdings/lutar-lean) — Lean 4 + Mathlib kernel proofs (8 locked theorems · 749 decl / 14 axioms / 163 sorries · canonical @ `c7c0ba17`)
 - [`ouroboros`](https://github.com/szl-holdings/ouroboros) — bounded-recursion runtime
 - [`platform`](https://github.com/szl-holdings/platform) — composing monorepo
 - [`szl-brand`](https://github.com/szl-holdings/szl-brand) — visual doctrine (PDFs hosted in-repo)
