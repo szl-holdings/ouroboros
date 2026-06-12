@@ -23,7 +23,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 * **runtime:** add OUROBOROS_RUN_ALL.py ([#73](https://github.com/szl-holdings/ouroboros/issues/73)) ([1c4aa81](https://github.com/szl-holdings/ouroboros/commit/1c4aa813d7b5c4f9c0983146376c24df3377e63a))
 * **runtime:** TH1–TH7 scaffolds with 105 vitest tests ([#31](https://github.com/szl-holdings/ouroboros/issues/31)) ([20ebfe4](https://github.com/szl-holdings/ouroboros/commit/20ebfe4c8bd3fda4378f1916441e2ae5bf66c84e))
 * **security:** OpenSSF Scorecard 10/10 push ([#75](https://github.com/szl-holdings/ouroboros/issues/75)) ([3189d26](https://github.com/szl-holdings/ouroboros/commit/3189d26468b51a5424972c55863943cdd50b04bc))
-* **supply-chain:** add SLSA Level 3 provenance generator on release ([#65](https://github.com/szl-holdings/ouroboros/issues/65)) ([f209811](https://github.com/szl-holdings/ouroboros/commit/f2098111402456fbb98b1bc084ee284501d5a76b))
+* **supply-chain:** add provenance generator on release (originally labeled "SLSA L3"; later corrected to honest SLSA L1 — see #85 below; L2/L3 remain roadmap, requiring Sigstore + isolated builders) ([#65](https://github.com/szl-holdings/ouroboros/issues/65)) ([f209811](https://github.com/szl-holdings/ouroboros/commit/f2098111402456fbb98b1bc084ee284501d5a76b))
 
 
 ### Bug Fixes
@@ -41,7 +41,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 * **readme:** 404 audit + Related-Repos footer (2 fixes) ([#55](https://github.com/szl-holdings/ouroboros/issues/55)) ([19599bb](https://github.com/szl-holdings/ouroboros/commit/19599bbb36e8e4d67bcaa86d5c2d444ee24d53e3))
 * **readme:** update Doctrine badge URL (DOCTRINE_V11.md not at root; → doctrine/ folder) ([c71bee9](https://github.com/szl-holdings/ouroboros/commit/c71bee9068a1b133cfee34443a570d72cf42e5d9))
 * **security:** bump vitest to ^4.1.8 in 5 standalone runtime modules (CVE/GHSA &lt;3.2.6) ([a035aed](https://github.com/szl-holdings/ouroboros/commit/a035aed7ae84c2ae3cb766ce1228612264daac84))
-* **slsa:** correct SLSA L3 theater → honest L1 disclosure ([#85](https://github.com/szl-holdings/ouroboros/issues/85)) ([737bb2e](https://github.com/szl-holdings/ouroboros/commit/737bb2e54607fa298dcf046f962c26a8eb97444e))
+* **slsa:** corrected prior L3 theater to honest SLSA L1 disclosure (L2/L3 remain roadmap, requiring Sigstore + isolated builders) ([#85](https://github.com/szl-holdings/ouroboros/issues/85)) ([737bb2e](https://github.com/szl-holdings/ouroboros/commit/737bb2e54607fa298dcf046f962c26a8eb97444e))
 * **Λ:** unify gate.ts scalar to weighted geometric mean (canonical) ([#41](https://github.com/szl-holdings/ouroboros/issues/41)) ([9d6a388](https://github.com/szl-holdings/ouroboros/commit/9d6a388a88f21065abb8ed1e0463dbefc3d62098))
 
 ## [Unreleased]
