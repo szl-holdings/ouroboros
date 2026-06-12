@@ -23,10 +23,15 @@ permissions:
 
 jobs:
   release-please:
-    uses: szl-holdings/.github/.github/workflows/reusable-release-please.yml@1c5f538ed3b8fe284df98b453d0db94f7a600c41 # v1 (.github main)
+    uses: szl-holdings/.github/.github/workflows/reusable-release-please.yml@main
     with:
       release-type: node
       target-branch: main
+      # Manifest-driven config registers custom types (compliance:/doctrine:) and
+      # pins the 6.3.0 baseline so the release-please v5 parser stops crashing on
+      # non-standard subjects + double-scope chore(deps)(deps): commits.
+      config-file: release-please-config.json
+      manifest-file: .release-please-manifest.json
     permissions:
       contents: write      # create release PRs and tags
       pull-requests: write # update release PR body
