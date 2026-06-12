@@ -14,9 +14,11 @@ name: Release Please
 # "Allow GitHub Actions to create pull requests" enabled in
 # Settings → Actions → General (founder one-time action).
 
+# DISABLED on push (2026-06-12): enterprise blocks "Allow GitHub Actions to
+# create or approve pull requests", so release-please's PR-creation fails every
+# push. Gated to manual dispatch; re-enable push when the enterprise allows it.
 on:
-  push:
-    branches: [main]
+  workflow_dispatch: {}
 
 permissions:
   contents: read
