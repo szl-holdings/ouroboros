@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.4.1](https://github.com/szl-holdings/ouroboros/compare/v6.4.0...v6.4.1) (2026-06-12)
+
+
+### Bug Fixes
+
+* **doctrine:** scope historical SLSA L3 changelog entries as corrected/roadmap ([#109](https://github.com/szl-holdings/ouroboros/issues/109)) ([e89d201](https://github.com/szl-holdings/ouroboros/commit/e89d201dd10222ac1359639c7eb518544f46510a))
+
 ## [6.4.0](https://github.com/szl-holdings/ouroboros/compare/v6.3.0...v6.4.0) (2026-06-12)
 
 
