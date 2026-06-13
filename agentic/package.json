@@ -27,5 +27,11 @@
     "formulas",
     "a11oy-core",
     "mcp-server"
-  ]
+  ],
+  "pnpm": {
+    "overrides": {
+      "vite": "^6.4.2",
+      "esbuild": "^0.25.0"
+    }
+  }
 }
