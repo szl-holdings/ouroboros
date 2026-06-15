@@ -14,8 +14,8 @@
   },
   "devDependencies": {
     "typescript": "^5.4.0",
-    "vitest": "^4.1.8",
-    "@types/node": "^25.9.2"
+    "vitest": "^4.1.9",
+    "@types/node": "^25.9.3"
   },
   "main": "./dist/glr.js",
   "types": "./dist/glr.d.ts",
