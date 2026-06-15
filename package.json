@@ -39,12 +39,12 @@
     }
   },
   "devDependencies": {
-    "@types/node": "^25.9.2",
+    "@types/node": "^25.9.3",
     "@types/react": "^19.2.17",
     "react": "^19.2.7",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.8",
-    "@biomejs/biome": "^2.4.16"
+    "vitest": "^4.1.9",
+    "@biomejs/biome": "^2.5.0"
   },
   "scripts": {
     "lint": "biome lint ./src",
