@@ -95,6 +95,12 @@ export interface LoopConfig {
   id?: string;
   /** Logical label for the trace. */
   label?: string;
+  /**
+   * Optional receipt-sink base URL. Used only as a fallback; the
+   * SZL_RECEIPT_SINK env var takes precedence. Governance receipts are
+   * emitted fire-and-forget and never block or fail the loop.
+   */
+  receiptServerUrl?: string;
 }
 
 /**
