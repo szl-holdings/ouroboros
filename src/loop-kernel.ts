@@ -20,6 +20,7 @@
  * Returns a typed LoopTrace. The trace is the product.
  */
 
+import { emitLoopReceipt } from './receipt-emitter.js';
 import type {
   ConsistencyFn,
   DeltaFn,
@@ -161,7 +162,7 @@ export async function runLoop<S, O = unknown>(
     }
   }
 
-  return {
+  const trace: LoopTrace<S, O> = {
     id,
     label,
     steps,
@@ -173,4 +174,10 @@ export async function runLoop<S, O = unknown>(
     earliestSafeExit,
     totalDurationMs,
   };
+
+  // Emit a governance receipt to the unified ledger, fire-and-forget. This
+  // never blocks the loop and never throws — a sink hiccup is invisible here.
+  emitLoopReceipt(trace, config.receiptServerUrl);
+
+  return trace;
 }
