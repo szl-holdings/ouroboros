@@ -135,7 +135,21 @@ receipt schema, not by a physical bound.
 | `agentic/` | Agent harness and dual-witness emitters |
 | `packages/` | Scoped npm packages (`@szl/ouroboros-*`) |
 | `LUTAR_EVIDENCE.md` | Runtime parity evidence log (218 reference vectors) |
-| `OUROBOROS_RUN_ALL.py` | **Thesis-provenance artifact** (~1.4 MB, stdlib-only). All 25 Ouroboros Thesis modules (v14 → v19.0) concatenated into one self-testing file as a frozen historical record of the thesis grafts. **Not imported by the runtime** (`src/`, `runtime/`, `agentic/`, `packages/` are the live code) and intentionally excluded from the doctrine gate. Run standalone with `python3 OUROBOROS_RUN_ALL.py` to replay all module self-tests (exit 0 = all green). Kept for citation/provenance; do not import or refactor. |
+| `OUROBOROS_RUN_ALL.py` | **Thesis-provenance artifact** (~1.4 MB, stdlib-only), **no longer tracked in-tree** — see note below. |
+
+> **Note on `OUROBOROS_RUN_ALL.py` (untracked generated bundle).** This file is a
+> **generated artifact**: all 25 Ouroboros Thesis modules (v14 → v19.0) concatenated into a
+> single self-testing, stdlib-only file as a frozen historical record of the thesis grafts.
+> It is **not imported by the runtime** (`src/`, `runtime/`, `agentic/`, `packages/` are the
+> live code) and is intentionally excluded from the doctrine gate. Because it is a ~1.4 MB
+> generated bundle that bloated every clone, it is now **git-ignored and no longer tracked**
+> (removed with `git rm --cached`; **no history was rewritten**, so prior commits and the
+> Zenodo DOIs in its header — Concept DOI `10.5281/zenodo.19944926`, v14–v17 DOIs — remain
+> the durable provenance anchors). It is produced by concatenating the v14–v19 thesis module
+> set (maintained in the author's thesis working tree / Replit) into one drop-in file; if you
+> need it, recover it from git history (`git show <pre-eviction-commit>:OUROBOROS_RUN_ALL.py`)
+> or re-generate it from the thesis modules. Run standalone with
+> `python3 OUROBOROS_RUN_ALL.py` to replay all module self-tests (exit 0 = all green). |
 
 ## Quick Start
 
