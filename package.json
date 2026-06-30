@@ -68,5 +68,10 @@
   "homepage": "https://github.com/szl-holdings/ouroboros",
   "bugs": {
     "url": "https://github.com/szl-holdings/ouroboros/issues"
+  },
+  "pnpm": {
+    "overrides": {
+      "vite": ">=8.0.16"
+    }
   }
 }
