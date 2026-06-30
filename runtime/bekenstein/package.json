@@ -15,7 +15,7 @@
   "devDependencies": {
     "typescript": "^5.4.0",
     "vitest": "^4.1.9",
-    "@types/node": "^26.0.0"
+    "@types/node": "^26.0.1"
   },
   "main": "./dist/entropy.js",
   "types": "./dist/entropy.d.ts",
