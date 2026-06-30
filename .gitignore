@@ -8,3 +8,6 @@ coverage/
 .vitest-cache/
 package-lock.json
 yarn.lock
+
+# Generated thesis-provenance bundle (~1.4 MB) — see README; kept locally, recover from git history if needed.
+OUROBOROS_RUN_ALL.py
