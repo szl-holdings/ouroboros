@@ -21,7 +21,7 @@ Autonomous agents can run away or skip oversight. Ouroboros guarantees each agen
 
 [![demo screenshot](https://raw.githubusercontent.com/szl-holdings/szl-brand/main/kit/logos/png/kanchay-512.png)](https://szlholdings-readme.static.hf.space/)
 
-<sub>_Screenshot: SZL Holdings kanchay mark — replace with a live capture of the running surface._</sub>
+<sub>_SZL Holdings kanchay mark. Live demo: <a href="https://szlholdings-readme.static.hf.space/">szlholdings-readme.static.hf.space</a>_</sub>
 
 ## ⚡ Quick start (30 seconds)
 
@@ -213,7 +213,7 @@ The substrate repos cross-link reciprocally. Links below point only to live repo
 
 - [`a11oy`](https://github.com/szl-holdings/a11oy) — governed command platform (policy · measurement · knowledge · QEC-integrity)
 - [`killinchu`](https://github.com/szl-holdings/killinchu) — drones & vessels counter-UAS Λ-gate
-- [`uds-mesh`](https://github.com/szl-holdings/uds-mesh) — UDS span schemas + governance receipts
+- [`szl-otel-mesh`](https://github.com/szl-holdings/szl-otel-mesh) — UDS span schemas + governance receipts (archived; renamed from uds-mesh 2026-06-28)
 - [`lutar-lean`](https://github.com/szl-holdings/lutar-lean) — Lean 4 + Mathlib kernel proofs (8 locked theorems · 749 decl / 14 axioms / 163 sorries · canonical @ `c7c0ba17`)
 - [`ouroboros`](https://github.com/szl-holdings/ouroboros) — bounded-recursion runtime
 - [`platform`](https://github.com/szl-holdings/platform) — composing monorepo
