@@ -9,7 +9,7 @@ engine that the `unified-kernel` in the platform repo depends on (via `@szl-hold
 
 ## 1. What ouroboros actually is
 
-ouroboros guarantees every agent decision loop:
+ouroboros bounds and witnesses every agent decision loop:
 
 1. **Terminates** — bounded by `maxSteps` (runtime contract v4: 12 steps).
 2. **Converges** — delta drops ≤ `convergenceThreshold` (1e-3) before budget exhausted.

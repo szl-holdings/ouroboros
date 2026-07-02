@@ -3,7 +3,7 @@
 
 # ouroboros
 
-### A runtime that keeps AI agents inside provable safety limits — every loop is bounded, witnessed, and produces a tamper-proof receipt.
+### A runtime that keeps AI agents inside provable safety limits — every loop is bounded, witnessed, and produces a tamper-evident receipt.
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg?style=flat-square)](LICENSE) [![Build](https://github.com/szl-holdings/ouroboros/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/szl-holdings/ouroboros/actions/workflows/ci.yml) [![Doctrine v11](https://img.shields.io/badge/Doctrine-v11_LOCKED-3b82f6?style=flat-square)](https://github.com/szl-holdings/.github/tree/main/doctrine) [![SLSA](https://img.shields.io/badge/SLSA-L1_honest-22c55e?style=flat-square)](https://slsa.dev/spec/v1.0/levels)
 
@@ -13,7 +13,7 @@
 
 ## 💡 Why it matters
 
-Autonomous agents can run away or skip oversight. Ouroboros guarantees each agent decision stays within a governance budget and emits a signed, replayable record connecting the policy to what actually executed.
+Autonomous agents can run away or skip oversight. Ouroboros bounds each agent decision loop to a governance budget and emits a signed, replayable record connecting the policy to what actually executed.
 
 ## ▶️ Live demo
 
