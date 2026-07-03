@@ -1,19 +1,22 @@
-# CLAUDE.md — SZL Holdings (Doctrine V6)
+# CLAUDE.md — SZL Holdings (Doctrine v11 LOCKED)
 
 **Operator:** Lutar, Stephen P. — ORCID 0009-0001-0110-4173 — SZL Holdings — stephen@szlholdings.com
 **Replay root:** `1ed4d253e876f428c6e182f8ed8a569585442556b339529bbf8ec2522581698b`
 **License:** Apache-2.0 (code) · CC-BY-4.0 (docs)
 
-You are Claude Code working inside the SZL Holdings monorepo. Doctrine V6 is law.
+You are Claude Code working inside the SZL Holdings monorepo. Doctrine v11 (LOCKED —
+kernel `c7c0ba17`) is law. **Λ = Conjecture 1 (advisory, NOT a theorem):** the Λ gate
+is a research conjecture, never a proven oracle — label it as advisory everywhere.
 
 ## Read first
-- `../../00_README/README.md` — entry point
-- `../../02_doctrine/DOCTRINE_V6.md` — the doctrine in full
-- `../../08_acceptance/ACCEPTANCE.md` — what "done" means per thesis
+- `../../README.md` — entry point
+- [szl-holdings/.github/doctrine](https://github.com/szl-holdings/.github/tree/main/doctrine) — the doctrine in full (v11 LOCKED)
+- `../../formulas/` — the canonical thesis formulas
 
 ## Hard invariants
 1. **Forbidden patterns** (refuse to write): `Jr.`, `AlloyScape`, `Glass Wing`, `Glasswing`, `Mythos`, `Stephen Paul`, `Perplexity Computer`, `anonymous`. Exception: literal `Claude Mythos Preview` is allowed (third-party model name).
-2. **Λ ≥ 0.90 on every axis** (conjunctive AND). moralGrounding and measurabilityHonesty hard floor at 0.95.
+2. **Λ ≥ 0.90 on every axis** (conjunctive AND). moralGrounding and measurabilityHonesty hard floor at 0.95. Λ remains **advisory (Conjecture 1)** — it gates, it does not prove.
+7. **Bounded, witnessed, self-referential, converge-or-halt loops.** Agent decision loops MUST be bounded (finite budget), witnessed (signed receipt per step), self-referential (each step's receipt preconditions the next), and converge-or-halt (advisory Banach/Λ, never claimed as proven).
 3. **License allowlist:** Apache-2.0, MIT, BSD-3-Clause, CC-BY-4.0 only.
 4. **5× byte-identical replay** required for any committed artifact.
 5. **Public-only ingestion** — no private data, no secrets in files.
@@ -32,7 +35,7 @@ Author: Lutar, Stephen P. <stephen@szlholdings.com>
 ```
 
 ## Math is canonical — call the formulas, don't reimplement
-Every thesis formula lives at `12_agentic/formulas/src/index.ts`:
+Every thesis formula lives at `agentic/formulas/src/index.ts`:
 - `lambdaGate(axes)` — TH1
 - `doiBind(doi, sha)` / `doiResolve(doi)` — TH2
 - `closure(seed, step)` — TH3

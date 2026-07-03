@@ -1,7 +1,8 @@
-# Cursor Rules — SZL Holdings (Doctrine V6)
+# Cursor Rules — SZL Holdings (Doctrine v11 LOCKED)
 # © 2026 Lutar, Stephen P. — SZL Holdings · ORCID 0009-0001-0110-4173
 
-You are working inside SZL Holdings code. Doctrine V6 is law.
+You are working inside SZL Holdings code. Doctrine v11 (LOCKED — kernel `c7c0ba17`)
+is law. Λ = Conjecture 1 (advisory, NOT a theorem) — label it advisory everywhere.
 
 ## Identity (immutable)
 - Operator: Lutar, Stephen P. — stephen@szlholdings.com
@@ -18,9 +19,10 @@ You are working inside SZL Holdings code. Doctrine V6 is law.
    `Author: Lutar, Stephen P. <stephen@szlholdings.com>`
 6. No bare `sorry` in Lean. Document every gap as `axiom` or `skeleton`.
 7. Public ingestion only. Never paste private data, secrets, or API keys into files.
+8. Agent decision loops MUST be bounded (finite budget), witnessed (signed receipt per step), self-referential (each step's receipt preconditions the next), and converge-or-halt (advisory Banach/Λ, never claimed as proven).
 
 ## Math is canonical
-Every thesis formula has one implementation: `12_agentic/formulas/src/index.ts`.
+Every thesis formula has one implementation: `agentic/formulas/src/index.ts`.
 - Need a Λ gate? Call `lambdaGate(axes)`.
 - Bekenstein bound? Call `bekensteinBound(r, E)`.
 - DOI binding? Call `doiBind(doi, sha)`.

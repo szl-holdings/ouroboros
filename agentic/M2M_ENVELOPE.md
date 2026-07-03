@@ -70,7 +70,7 @@ interface Envelope<T> {
 | R3 | A claim's only evidence is `{kind:"url"}` and the URL is on a known LLM-output domain | No self-citation loops |
 | R4 | `agent` field is one of the forbidden values (operator, perplexity, etc.) | Identity safety |
 | R5 | `doctrine.forbiddenScanned !== true` | Doctrine compliance |
-| R6 | Any string field contains a forbidden pattern (unless `Claude Mythos Preview` literal) | Doctrine V6 |
+| R6 | Any string field contains a forbidden pattern (unless `Claude Mythos Preview` literal) | Doctrine v11 |
 | R7 | `doctrine.lambda < 0.90` | Λ gate |
 | R8 | `doctrine.axes.moralGrounding < 0.95` or `measurabilityHonesty < 0.95` | Hard floors |
 | R9 | `nonce` already seen in this session | Replay attack |
@@ -141,7 +141,7 @@ Receiver rejects via R2. Sender must either:
 ## Implementation — TypeScript validator
 
 ```typescript
-// 12_agentic/a11oy-core/src/envelope.ts (separate file in payload)
+// agentic/a11oy-core/src/envelope.ts (separate file in payload)
 export function validateEnvelope<T>(e: Envelope<T>): { ok: boolean; rejections: string[] }
 ```
 

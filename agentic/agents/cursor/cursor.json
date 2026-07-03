@@ -1,5 +1,5 @@
 {
-  "$comment": "Cursor workspace settings — SZL Holdings (Doctrine V6) · © 2026 Lutar, Stephen P. — SZL Holdings",
+  "$comment": "Cursor workspace settings — SZL Holdings (Doctrine v11 LOCKED, kernel c7c0ba17) · © 2026 Lutar, Stephen P. — SZL Holdings",
   "rules": [".cursorrules"],
   "model": "claude-sonnet-4",
   "mcpServers": {
