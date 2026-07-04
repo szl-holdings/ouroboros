@@ -16,11 +16,11 @@ is a research conjecture, never a proven oracle — label it as advisory everywh
 ## Hard invariants
 1. **Forbidden patterns** (refuse to write): `Jr.`, `AlloyScape`, `Glass Wing`, `Glasswing`, `Mythos`, `Stephen Paul`, `Perplexity Computer`, `anonymous`. Exception: literal `Claude Mythos Preview` is allowed (third-party model name).
 2. **Λ ≥ 0.90 on every axis** (conjunctive AND). moralGrounding and measurabilityHonesty hard floor at 0.95. Λ remains **advisory (Conjecture 1)** — it gates, it does not prove.
-7. **Bounded, witnessed, self-referential, converge-or-halt loops.** Agent decision loops MUST be bounded (finite budget), witnessed (signed receipt per step), self-referential (each step's receipt preconditions the next), and converge-or-halt (advisory Banach/Λ, never claimed as proven).
 3. **License allowlist:** Apache-2.0, MIT, BSD-3-Clause, CC-BY-4.0 only.
 4. **5× byte-identical replay** required for any committed artifact.
 5. **Public-only ingestion** — no private data, no secrets in files.
 6. **No bandaids.** If a fix doesn't address the root cause, document it in `../../09_gaps_upgrades/GAP_REPORT.md`.
+7. **Bounded, witnessed, self-referential, converge-or-halt loops.** Agent decision loops MUST be bounded (finite budget), witnessed (signed receipt per step), self-referential (each step's receipt preconditions the next), and converge-or-halt (advisory Banach/Λ, never claimed as proven).
 
 ## Identity in every file
 ```
