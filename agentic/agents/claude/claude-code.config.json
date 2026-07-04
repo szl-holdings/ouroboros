@@ -1,5 +1,5 @@
 {
-  "$comment": "Claude Code SDK config — SZL Holdings · Doctrine V6 · © 2026 Lutar, Stephen P. — SZL Holdings",
+  "$comment": "Claude Code SDK config — SZL Holdings · Doctrine v11 LOCKED (kernel c7c0ba17) · © 2026 Lutar, Stephen P. — SZL Holdings",
   "version": 1,
   "system_prompt_file": "CLAUDE.md",
   "model": "claude-sonnet-4-20250514",
@@ -24,7 +24,8 @@
     "repo_delete"
   ],
   "rules": [
-    "Doctrine V6 — Λ ≥ 0.90 conjunctive AND, moral & measurability hard floor 0.95",
+    "Doctrine v11 LOCKED — Λ ≥ 0.90 conjunctive AND, moral & measurability hard floor 0.95 (Λ = Conjecture 1, advisory, never a proven oracle)",
+    "Agent decision loops MUST be bounded (finite budget), witnessed (signed receipt per step), self-referential (each step's receipt preconditions the next), and converge-or-halt (advisory Banach/Λ, never claimed as proven)",
     "Never write any of: Jr., AlloyScape, Glass Wing, Glasswing, Mythos, Stephen Paul, Perplexity Computer, anonymous",
     "Exception: Claude Mythos Preview (literal third-party model name)",
     "License allowlist: Apache-2.0, MIT, BSD-3-Clause, CC-BY-4.0",

@@ -3,9 +3,9 @@
 
 # @szl/bot-reviewer
 
-Doctrine V6 bot reviewer for the SZL Holdings repository. Scans changed files
-in a pull request for compliance with the eight Doctrine V6 invariants and
-posts a structured review comment via the `gh` CLI.
+Doctrine v11 (LOCKED) bot reviewer for the SZL Holdings repository. Scans changed
+files in a pull request for compliance with the Doctrine v11 invariants and
+posts a structured review comment via the `gh` CLI. Λ = Conjecture 1 (advisory).
 
 ---
 
@@ -15,7 +15,7 @@ On each pull request the reviewer runs every changed file through six checks:
 
 | Check | Rule ID | Details |
 |---|---|---|
-| Forbidden patterns | `forbidden-pattern` | 8 patterns (see Doctrine V6); "Claude Mythos Preview" excepted |
+| Forbidden patterns | `forbidden-pattern` | 8 patterns (see Doctrine v11); "Claude Mythos Preview" excepted |
 | License allowlist | `license-allowlist` | Apache-2.0, MIT, BSD-3-Clause, CC-BY-4.0 only |
 | SPDX header | `spdx-header` | `SPDX-License-Identifier: Apache-2.0` in first 5 lines of `.ts`/`.js` files |
 | Lean bare sorry | `lean-bare-sorry` | Bare `sorry` on its own line in `.lean` files |
@@ -103,9 +103,9 @@ jobs:
       - uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a
         with:
           node-version: "20"
-      - run: cd 12_agentic/bot-reviewer && npm install
+      - run: cd agentic/bot-reviewer && npm install
       - run: |
-          npx tsx 12_agentic/bot-reviewer/src/reviewer.ts \
+          npx tsx agentic/bot-reviewer/src/reviewer.ts \
             $(git diff --name-only origin/${{ github.base_ref }}...HEAD)
         env:
           GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN }}
@@ -113,9 +113,9 @@ jobs:
 
 ---
 
-## Doctrine V6 axes used
+## Doctrine v11 axes used
 
-The lambda gate evaluates all 9 axes defined in Doctrine V6:
+The lambda gate evaluates all 9 axes defined in Doctrine v11 (Λ = Conjecture 1, advisory):
 
 | # | Axis | Floor |
 |---|---|---|
@@ -151,10 +151,10 @@ doctrine-clean if and only if every axis meets its threshold.
    name it `BOT_GITHUB_TOKEN`, paste the PAT.
 6. **Copy the workflow file**:
    ```bash
-   cp 12_agentic/bot-reviewer/.github-workflows/bot-reviewer.yml \
+   cp agentic/bot-reviewer/.github-workflows/bot-reviewer.yml \
       .github/workflows/bot-reviewer.yml
    git add .github/workflows/bot-reviewer.yml
-   git commit -m "ci: add Doctrine V6 bot-reviewer workflow"
+   git commit -m "ci: add Doctrine v11 bot-reviewer workflow"
    ```
 
 ---
