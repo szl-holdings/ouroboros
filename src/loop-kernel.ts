@@ -69,7 +69,16 @@ export async function runLoop<S, O = unknown>(
     config = {},
   } = args;
 
-  const maxSteps = config.maxSteps ?? DEFAULT_MAX_STEPS;
+  // maxSteps is the boundedness guarantee of this primitive: the loop MUST
+  // always terminate on budget. A non-finite budget (Infinity/NaN) would
+  // silently make the loop UNBOUNDED — defeating the whole point — so we fail
+  // closed to the default. Fractional budgets are floored and negatives are
+  // clamped to 0 so the trace's reported maxSteps never lies about the actual
+  // iteration ceiling.
+  const rawMaxSteps = config.maxSteps ?? DEFAULT_MAX_STEPS;
+  const maxSteps = Number.isFinite(rawMaxSteps)
+    ? Math.max(0, Math.floor(rawMaxSteps))
+    : DEFAULT_MAX_STEPS;
   const convergenceThreshold = config.convergenceThreshold ?? DEFAULT_CONVERGENCE;
   // earlyExitConsistency: kept as-is (the >1 sentinel disables online exit).
   // We only enforce the lower bound to prevent negative thresholds from
