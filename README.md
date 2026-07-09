@@ -96,7 +96,7 @@ This repository's live demos, dataset mirror, and org showcase live on the [SZLH
 
 | Surface | Hugging Face artifact |
 |---------|---------------------|
-| **Live demo** | [szl-showcase](https://huggingface.co/spaces/SZLHOLDINGS/szl-showcase) · [szl-cookbook-runner](https://huggingface.co/spaces/SZLHOLDINGS/szl-cookbook-runner) |
+| **Live demo** | [szlholdings-readme.static.hf.space](https://szlholdings-readme.static.hf.space/) — the live SZL Holdings estate card (the earlier per-repo demo Spaces were removed in the 2026-07 estate cleanup) |
 | **Org showcase** | [SZLHOLDINGS on Hugging Face](https://huggingface.co/SZLHOLDINGS) — live Spaces, datasets & models (see org page for current counts) |
 
 ## Mathematical Foundation
