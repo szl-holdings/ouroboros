@@ -213,10 +213,10 @@ The substrate repos cross-link reciprocally. Links below point only to live repo
 
 - [`a11oy`](https://github.com/szl-holdings/a11oy) — governed command platform (policy · measurement · knowledge · QEC-integrity)
 - [`killinchu`](https://github.com/szl-holdings/killinchu) — drones & vessels counter-UAS Λ-gate
-- [`szl-otel-mesh`](https://github.com/szl-holdings/szl-otel-mesh) — UDS span schemas + governance receipts (archived; renamed from uds-mesh 2026-06-28)
 - [`lutar-lean`](https://github.com/szl-holdings/lutar-lean) — Lean 4 + Mathlib kernel proofs (8 locked theorems · 749 decl / 14 axioms / 163 sorries · canonical @ `c7c0ba17`)
 - [`ouroboros`](https://github.com/szl-holdings/ouroboros) — bounded-recursion runtime
 - [`platform`](https://github.com/szl-holdings/platform) — composing monorepo
+- [`szl-router`](https://github.com/szl-holdings/szl-router) — sovereign, OpenAI-compatible LLM router; honest provenance + a signed receipt on every answer
 - [`szl-brand`](https://github.com/szl-holdings/szl-brand) — visual doctrine (PDFs hosted in-repo)
 - [`szl-cookbook`](https://github.com/szl-holdings/szl-cookbook) — governed-AI recipes
 - [`vsp-otel`](https://github.com/szl-holdings/vsp-otel) — OpenTelemetry exporter for Λ-axis spans
