@@ -8,8 +8,8 @@
   "scripts": { "test": "vitest run", "typecheck": "tsc --noEmit" },
   "devDependencies": {
     "vitest": "^4.1.10",
-    "typescript": "^6.0.3",
-    "@types/node": "^26.1.0",
+    "typescript": "^7.0.2",
+    "@types/node": "^26.1.1",
     "fast-check": "^4.8.0"
   }
 }
