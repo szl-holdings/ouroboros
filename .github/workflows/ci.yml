@@ -17,7 +17,7 @@ jobs:
   ci:
     uses: szl-holdings/.github/.github/workflows/reusable-node-ci.yml@c8359e53b40560f15ed5c25c3e4e1256b0536cf8 # v1 (.github main)
     with:
-      node-version: '20'
+      node-version: '22'
       package-manager: 'pnpm'
 
   codeql:
