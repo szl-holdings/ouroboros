@@ -17,19 +17,10 @@ updates:
         patterns:
           - "*"
 
-  # npm / Node dependencies
+  # npm / Node dependencies. These are independent pnpm projects rather than
+  # one pnpm workspace, so each directory must be updated separately.
   - package-ecosystem: "npm"
-    directories:
-      - "/"
-      - "/agentic"
-      - "/agentic/bot-reviewer"
-      - "/agentic/formulas"
-      - "/runtime/bekenstein"
-      - "/runtime/category"
-      - "/runtime/closure"
-      - "/runtime/glr"
-      - "/runtime/lambda-gate"
-      - "/runtime/types"
+    directory: "/"
     schedule:
       interval: "weekly"
       day: "monday"
@@ -40,6 +31,150 @@ updates:
       - "security"
     open-pull-requests-limit: 10
     groups:
-      npm-deps:
+      npm-root:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "npm"
+    directory: "/agentic"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "08:00"
+      timezone: "America/New_York"
+    labels:
+      - "dependencies"
+      - "security"
+    open-pull-requests-limit: 10
+    groups:
+      npm-agentic:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "npm"
+    directory: "/agentic/bot-reviewer"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "08:00"
+      timezone: "America/New_York"
+    labels:
+      - "dependencies"
+      - "security"
+    open-pull-requests-limit: 10
+    groups:
+      npm-agentic-bot-reviewer:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "npm"
+    directory: "/agentic/formulas"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "08:00"
+      timezone: "America/New_York"
+    labels:
+      - "dependencies"
+      - "security"
+    open-pull-requests-limit: 10
+    groups:
+      npm-agentic-formulas:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "npm"
+    directory: "/runtime/bekenstein"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "08:00"
+      timezone: "America/New_York"
+    labels:
+      - "dependencies"
+      - "security"
+    open-pull-requests-limit: 10
+    groups:
+      npm-runtime-bekenstein:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "npm"
+    directory: "/runtime/category"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "08:00"
+      timezone: "America/New_York"
+    labels:
+      - "dependencies"
+      - "security"
+    open-pull-requests-limit: 10
+    groups:
+      npm-runtime-category:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "npm"
+    directory: "/runtime/closure"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "08:00"
+      timezone: "America/New_York"
+    labels:
+      - "dependencies"
+      - "security"
+    open-pull-requests-limit: 10
+    groups:
+      npm-runtime-closure:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "npm"
+    directory: "/runtime/glr"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "08:00"
+      timezone: "America/New_York"
+    labels:
+      - "dependencies"
+      - "security"
+    open-pull-requests-limit: 10
+    groups:
+      npm-runtime-glr:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "npm"
+    directory: "/runtime/lambda-gate"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "08:00"
+      timezone: "America/New_York"
+    labels:
+      - "dependencies"
+      - "security"
+    open-pull-requests-limit: 10
+    groups:
+      npm-runtime-lambda-gate:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "npm"
+    directory: "/runtime/types"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "08:00"
+      timezone: "America/New_York"
+    labels:
+      - "dependencies"
+      - "security"
+    open-pull-requests-limit: 10
+    groups:
+      npm-runtime-types:
         patterns:
           - "*"
