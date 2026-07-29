@@ -9,6 +9,7 @@
     "review": "tsx src/reviewer.ts",
     "build": "tsc --noEmit"
   },
+  "packageManager": "pnpm@10.26.1",
   "devDependencies": {
     "@types/node": "^26",
     "tsx": "^4.11.0",
