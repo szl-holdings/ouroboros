@@ -18,6 +18,24 @@ function readBody(req: http.IncomingMessage): Promise<unknown> {
   });
 }
 
+export function parseVerifyHash(raw: unknown): string {
+  if (typeof raw !== "object" || raw === null || Array.isArray(raw)) {
+    throw new TypeError("invalid verify request");
+  }
+
+  const fields = Object.keys(raw);
+  if (fields.length !== 1 || fields[0] !== "hash") {
+    throw new TypeError("invalid verify request");
+  }
+
+  const hash = (raw as Record<string, unknown>)["hash"];
+  if (typeof hash !== "string" || !/^[0-9a-f]{64}$/.test(hash)) {
+    throw new TypeError("invalid verify request");
+  }
+
+  return hash;
+}
+
 function send(res: http.ServerResponse, status: number, body: unknown): void {
   const json = JSON.stringify(body);
   res.writeHead(status, {
@@ -58,9 +76,8 @@ export function createServer(): http.Server {
 
       // POST /verify
       if (method === "POST" && url === "/verify") {
-        const body = await readBody(req) as { hash?: string };
-        if (!body.hash) { send(res, 400, { error: "hash required" }); return; }
-        send(res, 200, verifyReceipt(body.hash));
+        const hash = parseVerifyHash(await readBody(req));
+        send(res, 200, verifyReceipt(hash));
         return;
       }
 

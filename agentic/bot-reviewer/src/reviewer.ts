@@ -7,7 +7,7 @@
 // itself contain the literal strings. RegExps are constructed at module-init
 // from the decoded labels to keep them out of source text.
 
-import { readFileSync, statSync } from "node:fs";
+import { readFileSync } from "node:fs";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -290,24 +290,10 @@ export function reviewFiles(filePaths: string[]): ReviewResult {
   const violations: Violation[] = [];
 
   for (const fp of filePaths) {
-    // File size check (stat only — does not read content)
-    let sizeBytes: number;
+    // Read one snapshot so the size check and content checks use the same bytes.
+    let content: Buffer;
     try {
-      sizeBytes = statSync(fp).size;
-    } catch {
-      violations.push({
-        filePath: fp,
-        rule: "file-access",
-        detail: `Cannot stat file: ${fp}`,
-      });
-      continue;
-    }
-    violations.push(...checkFileSize(sizeBytes, fp));
-
-    // Read content
-    let text: string;
-    try {
-      text = readFileSync(fp, "utf8");
+      content = readFileSync(fp);
     } catch {
       violations.push({
         filePath: fp,
@@ -316,6 +302,8 @@ export function reviewFiles(filePaths: string[]): ReviewResult {
       });
       continue;
     }
+    violations.push(...checkFileSize(content.byteLength, fp));
+    const text = content.toString("utf8");
 
     // Forbidden patterns (all text files)
     violations.push(...scanForbiddenPatterns(text, fp));

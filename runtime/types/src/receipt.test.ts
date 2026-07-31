@@ -60,6 +60,18 @@ describe("parseReceipt", () => {
     const r = parseReceipt(raw);
     expect(r.doctrineVer).toBe("6");
   });
+
+  it("accepts arbitrary metadata with string keys", () => {
+    const raw = {
+      ...VALID_RECEIPT as object,
+      meta: { source: "unit-test", attempt: 2 },
+    };
+
+    expect(parseReceipt(raw).meta).toEqual({
+      source: "unit-test",
+      attempt: 2,
+    });
+  });
 });
 
 describe("safeParseReceipt", () => {
