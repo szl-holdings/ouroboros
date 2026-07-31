@@ -6,6 +6,7 @@
 // Test strings that would contain forbidden patterns are constructed via
 // Buffer.from(b64, "base64").toString() so this file is preflight-clean.
 
+import { fileURLToPath } from "node:url";
 import { describe, it, expect } from "vitest";
 import {
   scanForbiddenPatterns,
@@ -14,6 +15,7 @@ import {
   checkLeanSorry,
   checkFileSize,
   evaluateLambda,
+  reviewFiles,
   type LambdaAxes,
 } from "./reviewer.js";
 
@@ -369,5 +371,32 @@ describe("checkFileSize", () => {
   it("fails when size is 2 MiB", () => {
     const hits = checkFileSize(2 * CAP, "huge.bin");
     expect(hits.length).toBeGreaterThan(0);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// 7. File review snapshot
+// ---------------------------------------------------------------------------
+describe("reviewFiles", () => {
+  it("reviews the exact bytes read from an accessible source file", () => {
+    const packageJson = fileURLToPath(new URL("../package.json", import.meta.url));
+    const result = reviewFiles([packageJson]);
+
+    expect(result.pass).toBe(true);
+    expect(result.violations).toHaveLength(0);
+  });
+
+  it("reports a file-access violation for an unreadable path", () => {
+    const missing = fileURLToPath(new URL("./does-not-exist.ts", import.meta.url));
+    const result = reviewFiles([missing]);
+
+    expect(result.pass).toBe(false);
+    expect(result.violations).toEqual([
+      {
+        filePath: missing,
+        rule: "file-access",
+        detail: `Cannot read file: ${missing}`,
+      },
+    ]);
   });
 });

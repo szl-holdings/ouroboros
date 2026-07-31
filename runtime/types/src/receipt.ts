@@ -42,7 +42,7 @@ export const ReceiptSchema = z.object({
   /** Semantic version of the Doctrine in force when receipt was issued */
   doctrineVer: z.string().default("6"),
   /** Arbitrary metadata for downstream modules */
-  meta:        z.record(z.unknown()).optional(),
+  meta:        z.record(z.string(), z.unknown()).optional(),
 });
 
 export type Receipt = z.infer<typeof ReceiptSchema>;

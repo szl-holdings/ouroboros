@@ -18,6 +18,24 @@ function readBody(req: http.IncomingMessage): Promise<unknown> {
   });
 }
 
+export function parseVerifyHash(raw: unknown): string {
+  if (typeof raw !== "object" || raw === null || Array.isArray(raw)) {
+    throw new TypeError("invalid verify request");
+  }
+
+  const fields = Object.keys(raw);
+  if (fields.length !== 1 || fields[0] !== "hash") {
+    throw new TypeError("invalid verify request");
+  }
+
+  const hash = (raw as Record<string, unknown>)["hash"];
+  if (typeof hash !== "string" || !/^[0-9a-f]{64}$/.test(hash)) {
+    throw new TypeError("invalid verify request");
+  }
+
+  return hash;
+}
+
 function send(res: http.ServerResponse, status: number, body: unknown): void {
   const json = JSON.stringify(body);
   res.writeHead(status, {
@@ -27,44 +45,58 @@ function send(res: http.ServerResponse, status: number, body: unknown): void {
   res.end(json);
 }
 
+type RouteHandler = (
+  req: http.IncomingMessage,
+  res: http.ServerResponse,
+) => void | Promise<void>;
+
+const handleReceiptTransit: RouteHandler = async (req, res) => {
+  const body = await readBody(req);
+  const result = gateTransit(body);
+  send(res, result.stored ? 201 : 422, result);
+};
+
+const handleReceiptList: RouteHandler = (_req, res) => {
+  send(res, 200, allReceipts());
+};
+
+const handleReceiptVerify: RouteHandler = async (req, res) => {
+  const hash = parseVerifyHash(await readBody(req));
+  send(res, 200, verifyReceipt(hash));
+};
+
+const handleFallback: RouteHandler = (req, res) => {
+  const url = req.url ?? "/";
+  const method = req.method?.toUpperCase() ?? "GET";
+  const hashMatch = url.match(/^\/receipts\/([0-9a-f]{64})$/);
+
+  if (method === "GET" && hashMatch) {
+    const receipt = getReceipt(hashMatch[1]);
+    if (!receipt) {
+      send(res, 404, { error: "not found" });
+      return;
+    }
+    send(res, 200, receipt);
+    return;
+  }
+
+  send(res, 404, { error: "not found" });
+};
+
+const EXACT_ROUTES: ReadonlyMap<string, RouteHandler> = new Map([
+  ["POST /receipts", handleReceiptTransit],
+  ["GET /receipts", handleReceiptList],
+  ["POST /verify", handleReceiptVerify],
+]);
+
 export function createServer(): http.Server {
   return http.createServer(async (req, res) => {
     const url = req.url ?? "/";
     const method = req.method?.toUpperCase() ?? "GET";
 
     try {
-      // POST /receipts
-      if (method === "POST" && url === "/receipts") {
-        const body = await readBody(req);
-        const result = gateTransit(body);
-        send(res, result.stored ? 201 : 422, result);
-        return;
-      }
-
-      // GET /receipts/:hash
-      const hashMatch = url.match(/^\/receipts\/([0-9a-f]{64})$/);
-      if (method === "GET" && hashMatch) {
-        const r = getReceipt(hashMatch[1]);
-        if (!r) { send(res, 404, { error: "not found" }); return; }
-        send(res, 200, r);
-        return;
-      }
-
-      // GET /receipts
-      if (method === "GET" && url === "/receipts") {
-        send(res, 200, allReceipts());
-        return;
-      }
-
-      // POST /verify
-      if (method === "POST" && url === "/verify") {
-        const body = await readBody(req) as { hash?: string };
-        if (!body.hash) { send(res, 400, { error: "hash required" }); return; }
-        send(res, 200, verifyReceipt(body.hash));
-        return;
-      }
-
-      send(res, 404, { error: "not found" });
+      const handler = EXACT_ROUTES.get(`${method} ${url}`) ?? handleFallback;
+      await handler(req, res);
     } catch (err) {
       // Log full error server-side for ops, but never leak details to caller (CWE-209).
       console.error("[lambda-gate] request error:", err);
