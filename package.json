@@ -43,9 +43,9 @@
     "@types/react": "^19.2.18",
     "react": "^19.2.8",
     "typescript": "^7.0.2",
-    "vitest": "^4.1.10",
-    "@biomejs/biome": "^2.5.8",
-    "vite": ">=8.2.1"
+    "vitest": "^4.1.11",
+    "@biomejs/biome": "^2.5.10",
+    "vite": ">=8.2.2"
   },
   "scripts": {
     "lint": "biome lint ./src",
@@ -72,7 +72,7 @@
   },
   "pnpm": {
     "overrides": {
-      "vite": ">=8.2.1"
+      "vite": ">=8.2.2"
     }
   }
 }
