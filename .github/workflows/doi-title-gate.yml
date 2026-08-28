@@ -16,6 +16,9 @@ permissions:
 jobs:
   doi-title-gate:
     runs-on: ubuntu-latest
+    # Six admitted DOIs at two endpoints each have a 612-second worst-case
+    # network budget; 15 minutes leaves deterministic summary/upload headroom.
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
       - name: Extract DOIs from README
@@ -28,39 +31,331 @@ jobs:
           echo "Found DOIs:"; cat /tmp/dois.txt
       - name: Verify each DOI resolves and titles match versions
         run: |
+          set -u -o pipefail
+
           # DOI truth-table (postmortem T11 — zenodo.20173912=v13, zenodo.20173920=v12)
           # This gate prevents a repeat of the v12/v13 DOI swap incident.
           # Concept DOIs (e.g. 19944926) redirect to their latest version record
           # via Zenodo's API; we follow that redirect with -L (canonical Zenodo
           # behavior) so concept-DOI references in README continue to resolve as
           # they were designed to.
+          readonly max_attempts=3
+          readonly backoff_seconds=2
+          readonly max_dois=6
+          receipt_dir="${RUNNER_TEMP}/doi-title-gate-receipt"
+          receipt="${receipt_dir}/receipt.jsonl"
+          request_dir="${RUNNER_TEMP}/doi-title-gate-requests"
+          mkdir -p "$receipt_dir" "$request_dir"
+          : > "$receipt"
+
+          write_probe() {
+            local id="$1"
+            local endpoint="$2"
+            local status="$3"
+            local reason="$4"
+            local http_status="$5"
+            local curl_exit="$6"
+            local attempts="$7"
+            local final_url="$8"
+            jq -cn \
+              --arg observed_at "$(date -u +'%Y-%m-%dT%H:%M:%SZ')" \
+              --arg source_commit "$GITHUB_SHA" \
+              --arg run_id "$GITHUB_RUN_ID" \
+              --arg run_attempt "$GITHUB_RUN_ATTEMPT" \
+              --arg doi "10.5281/zenodo.$id" \
+              --arg endpoint "$endpoint" \
+              --arg status "$status" \
+              --arg reason "$reason" \
+              --arg http_status "$http_status" \
+              --arg final_url "$final_url" \
+              --argjson curl_exit "$curl_exit" \
+              --argjson attempts "$attempts" \
+              '{schema_version:1,record_type:"probe",gate:"huklla-t11-doi-title",observed_at:$observed_at,source_commit:$source_commit,run_id:$run_id,run_attempt:$run_attempt,doi:$doi,endpoint:$endpoint,status:$status,reason:$reason,http_status:$http_status,final_url:$final_url,curl_exit:$curl_exit,attempts:$attempts}' \
+              >> "$receipt"
+          }
+
+          write_result() {
+            local id="$1"
+            local status="$2"
+            local reason="$3"
+            local resolved_id="${4:-}"
+            local title_version="${5:-}"
+            local metadata_version="${6:-}"
+            local readme_version="${7:-}"
+            jq -cn \
+              --arg observed_at "$(date -u +'%Y-%m-%dT%H:%M:%SZ')" \
+              --arg source_commit "$GITHUB_SHA" \
+              --arg run_id "$GITHUB_RUN_ID" \
+              --arg run_attempt "$GITHUB_RUN_ATTEMPT" \
+              --arg doi "10.5281/zenodo.$id" \
+              --arg status "$status" \
+              --arg reason "$reason" \
+              --arg resolved_id "$resolved_id" \
+              --arg title_version "$title_version" \
+              --arg metadata_version "$metadata_version" \
+              --arg readme_version "$readme_version" \
+              '{schema_version:1,record_type:"result",gate:"huklla-t11-doi-title",observed_at:$observed_at,source_commit:$source_commit,run_id:$run_id,run_attempt:$run_attempt,doi:$doi,status:$status,reason:$reason,resolved_record_id:($resolved_id|if length>0 then . else null end),title_version:($title_version|if length>0 then . else null end),metadata_version:($metadata_version|if length>0 then . else null end),readme_version:($readme_version|if length>0 then . else null end)}' \
+              >> "$receipt"
+          }
+
+          is_transient_curl_exit() {
+            case "$1" in
+              5|6|7|18|28|35|52|55|56|92) return 0 ;;
+              *) return 1 ;;
+            esac
+          }
+
+          is_transient_http_status() {
+            case "$1" in
+              000|408|425|429|5??) return 0 ;;
+              *) return 1 ;;
+            esac
+          }
+
+          # Sets FETCH_HTTP, FETCH_URL, FETCH_CURL_EXIT, FETCH_ATTEMPTS, and
+          # FETCH_CLASS.
+          # Return 0 means 2xx; 1 means a definitive non-2xx/non-transport
+          # response; 2 means retryable external failure exhausted.
+          fetch_with_retry() {
+            local endpoint="$1"
+            local url="$2"
+            local output="$3"
+            local accept="$4"
+            local attempt=1
+            local raw_status=""
+            local curl_exit=0
+
+            FETCH_HTTP="000"
+            FETCH_URL=""
+            FETCH_CURL_EXIT=0
+            FETCH_ATTEMPTS=0
+            FETCH_CLASS="UNAVAILABLE"
+
+            while [ "$attempt" -le "$max_attempts" ]; do
+              FETCH_ATTEMPTS="$attempt"
+              : > "$output"
+              raw_status=""
+              curl_exit=0
+
+              if [ -n "$accept" ]; then
+                if raw_status=$(curl --silent --show-error --location \
+                    --proto '=https' --proto-redir '=https' --max-redirs 5 \
+                    --connect-timeout 5 --max-time 15 --max-filesize 1048576 \
+                    --header "Accept: $accept" --output "$output" \
+                    --write-out '%{http_code}\t%{url_effective}' "$url"); then
+                  curl_exit=0
+                else
+                  curl_exit=$?
+                fi
+              elif raw_status=$(curl --silent --show-error --location \
+                  --proto '=https' --proto-redir '=https' --max-redirs 5 \
+                  --connect-timeout 5 --max-time 15 --max-filesize 1048576 \
+                  --output "$output" --write-out '%{http_code}\t%{url_effective}' "$url"); then
+                curl_exit=0
+              else
+                curl_exit=$?
+              fi
+
+              if [[ "$raw_status" == *$'\t'* ]]; then
+                FETCH_HTTP="${raw_status%%$'\t'*}"
+                FETCH_URL="${raw_status#*$'\t'}"
+              else
+                FETCH_HTTP="${raw_status:-000}"
+                FETCH_URL=""
+              fi
+              FETCH_CURL_EXIT="$curl_exit"
+
+              if [ "$curl_exit" -eq 0 ] && [[ "$FETCH_HTTP" == 2* ]]; then
+                FETCH_CLASS="PASS"
+                return 0
+              fi
+
+              if { [ "$curl_exit" -ne 0 ] && is_transient_curl_exit "$curl_exit"; } \
+                  || { [ "$curl_exit" -eq 0 ] && is_transient_http_status "$FETCH_HTTP"; }; then
+                if [ "$attempt" -lt "$max_attempts" ]; then
+                  echo "  $endpoint attempt $attempt/$max_attempts unavailable (curl=$curl_exit HTTP=$FETCH_HTTP); retrying" >&2
+                  sleep $((backoff_seconds * attempt))
+                  attempt=$((attempt + 1))
+                  continue
+                fi
+                FETCH_CLASS="UNAVAILABLE"
+                return 2
+              fi
+
+              FETCH_CLASS="FAIL"
+              return 1
+            done
+
+            FETCH_CLASS="UNAVAILABLE"
+            return 2
+          }
+
+          normalize_version() {
+            local value="$1"
+            value="${value#v}"
+            [[ "$value" =~ ^[0-9]+([.][0-9]+)*$ ]] || return 1
+            while [[ "$value" == *".0" ]]; do
+              value="${value%.0}"
+            done
+            printf '%s\n' "$value"
+          }
+
+          normalize_metadata_version() {
+            local value="$1"
+            local normalized=""
+            local token=""
+            local -a tokens=()
+
+            # Keep extraction bounded before applying a regex to provider data.
+            [ "${#value}" -le 256 ] || return 1
+
+            if normalized=$(normalize_version "$value"); then
+              printf '%s\n' "$normalized"
+              return 0
+            fi
+
+            while IFS= read -r token; do
+              [ -n "$token" ] && tokens+=("$token")
+            done < <(printf '%s\n' "$value" | grep -oE 'v[0-9]+([.][0-9]+)*' || true)
+
+            # A decorated metadata field is admissible only when exactly one
+            # title-relevant version token exists. Repeated or conflicting
+            # tokens are ambiguous and therefore fail closed.
+            [ "${#tokens[@]}" -eq 1 ] || return 1
+            normalize_version "${tokens[0]}"
+          }
+
+          test_metadata_version_normalizer() {
+            local actual=""
+
+            [ "$(normalize_metadata_version 'paper-v18-1.0.0')" = "18" ] || return 1
+            [ "$(normalize_metadata_version '18.0.0')" = "18" ] || return 1
+            [ "$(normalize_metadata_version 'v18.2.0')" = "18.2" ] || return 1
+
+            if actual=$(normalize_metadata_version 'paper-release'); then
+              return 1
+            fi
+            if actual=$(normalize_metadata_version 'paper-v18-v19'); then
+              return 1
+            fi
+            if actual=$(normalize_metadata_version 'paper-v18-copy-v18'); then
+              return 1
+            fi
+            return 0
+          }
+
+          if ! test_metadata_version_normalizer; then
+            echo "::error::DOI METADATA VERSION NORMALIZER SELF-TEST FAILED"
+            exit 1
+          fi
+
           fail=0
+          unavailable=0
+          pass_count=0
+          fail_count=0
+          unavailable_count=0
+          doi_count=$(wc -l < /tmp/dois.txt | tr -d '[:space:]')
+          if ! [[ "$doi_count" =~ ^[0-9]+$ ]] \
+              || [ "$doi_count" -lt 1 ] \
+              || [ "$doi_count" -gt "$max_dois" ]; then
+            echo "::error::DOI SET OUT OF BOUNDS: found '$doi_count', expected 1..$max_dois"
+            jq -cn \
+              --arg observed_at "$(date -u +'%Y-%m-%dT%H:%M:%SZ')" \
+              --arg source_commit "$GITHUB_SHA" \
+              --arg run_id "$GITHUB_RUN_ID" \
+              --arg run_attempt "$GITHUB_RUN_ATTEMPT" \
+              --arg doi_count "$doi_count" \
+              --argjson max_dois "$max_dois" \
+              '{schema_version:1,record_type:"summary",gate:"huklla-t11-doi-title",observed_at:$observed_at,source_commit:$source_commit,run_id:$run_id,run_attempt:$run_attempt,overall_status:"FAIL",reason:"DOI_SET_OUT_OF_BOUNDS",doi_count:$doi_count,max_dois:$max_dois,counts:{pass:0,fail:1,unavailable:0}}' \
+              >> "$receipt"
+            exit 1
+          fi
           while read id; do
             [ -z "$id" ] && continue
             echo "::group::Checking zenodo.$id"
 
-            # Step 1: Check doi.org resolves (HTTP 200-range, follow redirects)
-            doi_status=$(curl -sS -o /dev/null -w "%{http_code}" \
-              --max-time 15 --location \
-              "https://doi.org/10.5281/zenodo.$id" 2>&1)
-            if [[ "$doi_status" != 2* ]]; then
-              echo "::error::DOI-RESOLVE FAILURE: zenodo.$id — doi.org returned HTTP $doi_status (expected 2xx)"
+            # Step 1: Check doi.org resolves (HTTP 200-range, follow redirects).
+            # Curl is always invoked in an if-condition so bash -e cannot bypass
+            # receipt creation when curl exits nonzero.
+            doi_body="$request_dir/doi-$id.body"
+            if fetch_with_retry "doi.org" \
+                "https://doi.org/10.5281/zenodo.$id" "$doi_body" ""; then
+              doi_fetch_rc=0
+            else
+              doi_fetch_rc=$?
+            fi
+            doi_status="$FETCH_HTTP"
+            doi_effective_url="$FETCH_URL"
+            doi_curl_exit="$FETCH_CURL_EXIT"
+            doi_attempts="$FETCH_ATTEMPTS"
+
+            if [ "$doi_fetch_rc" -eq 2 ]; then
+              echo "::error::DOI-RESOLVE UNAVAILABLE: zenodo.$id — external transport exhausted after $doi_attempts attempts (curl=$doi_curl_exit HTTP=$doi_status)"
+              write_probe "$id" "doi.org" "UNAVAILABLE" "EXTERNAL_TRANSPORT_EXHAUSTED" "$doi_status" "$doi_curl_exit" "$doi_attempts" "$doi_effective_url"
+              write_result "$id" "UNAVAILABLE" "DOI_RESOLUTION_UNAVAILABLE"
+              unavailable=1
+              unavailable_count=$((unavailable_count + 1))
+              echo "::endgroup::"
+              continue
+            elif [ "$doi_fetch_rc" -ne 0 ]; then
+              echo "::error::DOI-RESOLVE FAILURE: zenodo.$id — doi.org returned a definitive failure (curl=$doi_curl_exit HTTP=$doi_status)"
+              write_probe "$id" "doi.org" "FAIL" "DEFINITIVE_NON_2XX_RESPONSE" "$doi_status" "$doi_curl_exit" "$doi_attempts" "$doi_effective_url"
+              write_result "$id" "FAIL" "DOI_RESOLUTION_FAILURE"
               fail=1
+              fail_count=$((fail_count + 1))
               echo "::endgroup::"
               continue
             fi
+            write_probe "$id" "doi.org" "PASS" "HTTP_2XX" "$doi_status" "$doi_curl_exit" "$doi_attempts" "$doi_effective_url"
             echo "doi.org status: $doi_status ✓"
 
             # Step 2: Fetch Zenodo API metadata
             #   -L  follow Zenodo's concept-DOI → version-record redirect
             #   -H  request JSON explicitly so we get API JSON, not the HTML fallback
-            meta=$(curl -sSL --max-time 15 \
-                     -H "Accept: application/json" \
-                     "https://zenodo.org/api/records/$id")
-            http_ok=$(echo "$meta" | jq -e '.id' > /dev/null 2>&1 && echo "yes" || echo "no")
-            if [ "$http_ok" != "yes" ]; then
-              echo "::error::DOI-API FAILURE: zenodo.$id — Zenodo API returned no record"
+            meta_file="$request_dir/zenodo-$id.json"
+            if fetch_with_retry "zenodo.org" \
+                "https://zenodo.org/api/records/$id" "$meta_file" "application/json"; then
+              meta_fetch_rc=0
+            else
+              meta_fetch_rc=$?
+            fi
+            meta_status="$FETCH_HTTP"
+            meta_effective_url="$FETCH_URL"
+            meta_curl_exit="$FETCH_CURL_EXIT"
+            meta_attempts="$FETCH_ATTEMPTS"
+
+            if [ "$meta_fetch_rc" -eq 2 ]; then
+              echo "::error::DOI-API UNAVAILABLE: zenodo.$id — external transport exhausted after $meta_attempts attempts (curl=$meta_curl_exit HTTP=$meta_status)"
+              write_probe "$id" "zenodo.org" "UNAVAILABLE" "EXTERNAL_TRANSPORT_EXHAUSTED" "$meta_status" "$meta_curl_exit" "$meta_attempts" "$meta_effective_url"
+              write_result "$id" "UNAVAILABLE" "ZENODO_METADATA_UNAVAILABLE"
+              unavailable=1
+              unavailable_count=$((unavailable_count + 1))
+              echo "::endgroup::"
+              continue
+            elif [ "$meta_fetch_rc" -ne 0 ]; then
+              echo "::error::DOI-API FAILURE: zenodo.$id — Zenodo returned a definitive failure (curl=$meta_curl_exit HTTP=$meta_status)"
+              write_probe "$id" "zenodo.org" "FAIL" "DEFINITIVE_NON_2XX_RESPONSE" "$meta_status" "$meta_curl_exit" "$meta_attempts" "$meta_effective_url"
+              write_result "$id" "FAIL" "ZENODO_METADATA_RESPONSE_FAILURE"
               fail=1
+              fail_count=$((fail_count + 1))
+              echo "::endgroup::"
+              continue
+            fi
+            write_probe "$id" "zenodo.org" "PASS" "HTTP_2XX" "$meta_status" "$meta_curl_exit" "$meta_attempts" "$meta_effective_url"
+
+            if ! jq -e '
+                type == "object"
+                and ((.id | type) == "number" or ((.id | type) == "string" and (.id | test("^[0-9]+$"))))
+                and (.doi | type) == "string"
+                and (.metadata | type) == "object"
+                and (.metadata.title | type) == "string"
+                and (.metadata.title | length) > 0
+                and ((.metadata.version == null) or ((.metadata.version | type) == "string" and (.metadata.version | length) > 0))
+              ' "$meta_file" > /dev/null 2>&1; then
+              echo "::error::DOI-API INVALID METADATA: zenodo.$id — response is not the required Zenodo JSON record shape"
+              write_result "$id" "FAIL" "INVALID_METADATA"
+              fail=1
+              fail_count=$((fail_count + 1))
               echo "::endgroup::"
               continue
             fi
@@ -71,54 +366,125 @@ jobs:
             # concept id. Such a DOI has NO pinned version (its title tracks whatever
             # the latest release is), so the README must NOT be version-cross-checked
             # against it — only version-specific DOIs (resolved_id == id) are.
-            resolved_id=$(echo "$meta" | jq -r '.id // "MISSING"')
+            resolved_id=$(jq -r '.id | tostring' "$meta_file")
+            record_doi=$(jq -r '.doi' "$meta_file")
+            requested_doi="10.5281/zenodo.$id"
+            expected_record_doi="10.5281/zenodo.$resolved_id"
             is_concept=0
             if [ "$resolved_id" != "$id" ]; then
               is_concept=1
               echo "  concept-DOI redirect: zenodo.$id → zenodo.$resolved_id (always-latest — version cross-check skipped) ✓"
             fi
 
-            title=$(echo "$meta" | jq -r '.metadata.title // "MISSING"')
-            ver=$(echo  "$meta" | jq -r '.metadata.version // "MISSING"')
-            echo "  title:   $title"
-            echo "  version: $ver"
-
-            if [ "$title" = "MISSING" ]; then
-              echo "::error::DOI-TITLE MISSING: zenodo.$id — Zenodo record has no title"
+            if [ "$record_doi" != "$expected_record_doi" ]; then
+              echo "::error::DOI-IDENTITY MISMATCH: zenodo.$id — record id $resolved_id is bound to '$record_doi', expected '$expected_record_doi'"
+              write_result "$id" "FAIL" "RECORD_DOI_IDENTITY_MISMATCH" "$resolved_id"
               fail=1
+              fail_count=$((fail_count + 1))
               echo "::endgroup::"
               continue
             fi
 
+            if [ "$is_concept" -eq 1 ]; then
+              concept_record_id=$(jq -r '.conceptrecid // "" | tostring' "$meta_file")
+              concept_doi=$(jq -r '.conceptdoi // ""' "$meta_file")
+              if [ "$concept_record_id" != "$id" ] || [ "$concept_doi" != "$requested_doi" ]; then
+                echo "::error::DOI-IDENTITY MISMATCH: zenodo.$id — redirected record $resolved_id is not bound to requested concept DOI"
+                write_result "$id" "FAIL" "CONCEPT_IDENTITY_MISMATCH" "$resolved_id"
+                fail=1
+                fail_count=$((fail_count + 1))
+                echo "::endgroup::"
+                continue
+              fi
+            elif [ "$record_doi" != "$requested_doi" ]; then
+              echo "::error::DOI-IDENTITY MISMATCH: zenodo.$id — version-specific record does not match the requested DOI"
+              write_result "$id" "FAIL" "REQUESTED_RECORD_IDENTITY_MISMATCH" "$resolved_id"
+              fail=1
+              fail_count=$((fail_count + 1))
+              echo "::endgroup::"
+              continue
+            fi
+
+            if [ "$meta_effective_url" != "https://zenodo.org/api/records/$resolved_id" ] \
+                && [ "$meta_effective_url" != "https://zenodo.org/api/records/$resolved_id/" ]; then
+              echo "::error::DOI-IDENTITY MISMATCH: zenodo.$id — metadata final URL '$meta_effective_url' does not name record $resolved_id"
+              write_result "$id" "FAIL" "METADATA_FINAL_URL_MISMATCH" "$resolved_id"
+              fail=1
+              fail_count=$((fail_count + 1))
+              echo "::endgroup::"
+              continue
+            fi
+
+            if ! [[ "$doi_effective_url" =~ ^https://zenodo\.org/records?/$resolved_id/?$ ]]; then
+              echo "::error::DOI-IDENTITY MISMATCH: zenodo.$id — resolver final URL '$doi_effective_url' does not name record $resolved_id"
+              write_result "$id" "FAIL" "RESOLVER_FINAL_URL_MISMATCH" "$resolved_id"
+              fail=1
+              fail_count=$((fail_count + 1))
+              echo "::endgroup::"
+              continue
+            fi
+
+            title=$(jq -r '.metadata.title' "$meta_file")
+            ver=$(jq -r '.metadata.version // "MISSING"' "$meta_file")
+            echo "  title:   $title"
+            echo "  version: $ver"
+
             # Step 3: Extract version token from title (e.g. v13, v6.3.0)
-            tver=$(echo "$title" | grep -oE "v[0-9]+(\.[0-9]+)*" | head -1)
+            tver=$(printf '%s\n' "$title" | grep -oE "v[0-9]+(\.[0-9]+)*" | head -1 || true)
 
             if [ -n "$tver" ] && [ "$ver" != "MISSING" ]; then
-              if ! echo "$ver" | grep -qF "$tver"; then
-                echo "::warning::VERSION-SKEW on zenodo.$id — title says $tver but version field is $ver"
-              else
-                echo "  version consistency: $tver ✓"
+              if ! normalized_title_version=$(normalize_version "$tver"); then
+                echo "::error::DOI-TITLE INVALID VERSION: zenodo.$id — title token '$tver' is not canonical"
+                write_result "$id" "FAIL" "INVALID_TITLE_VERSION" "$resolved_id" "$tver" "$ver"
+                fail=1
+                fail_count=$((fail_count + 1))
+                echo "::endgroup::"
+                continue
               fi
+              if ! normalized_metadata_version=$(normalize_metadata_version "$ver"); then
+                echo "::error::DOI-API INVALID VERSION: zenodo.$id — metadata version '$ver' is neither canonical nor uniquely tokenized"
+                write_result "$id" "FAIL" "INVALID_METADATA_VERSION" "$resolved_id" "$tver" "$ver"
+                fail=1
+                fail_count=$((fail_count + 1))
+                echo "::endgroup::"
+                continue
+              fi
+              if [ "$normalized_title_version" != "$normalized_metadata_version" ]; then
+                echo "::error::VERSION-SKEW on zenodo.$id — title says $tver but version field is $ver"
+                write_result "$id" "FAIL" "TITLE_METADATA_VERSION_MISMATCH" "$resolved_id" "$tver" "$ver"
+                fail=1
+                fail_count=$((fail_count + 1))
+                echo "::endgroup::"
+                continue
+              fi
+              echo "  version consistency: $tver ↔ $ver ✓"
             fi
 
             # Step 4: Cross-check README version claim vs Zenodo title.
             # Concept DOIs are always-latest and carry no pinned version, so this
             # cross-check applies only to version-specific DOIs (see is_concept above).
+            readme_claim=""
             if [ "$is_concept" = "1" ]; then
               echo "  concept DOI — README carries no version claim to cross-check (by design) ✓"
             else
               # Look for lines that reference this DOI and extract claimed version
               readme_claim=$(grep -oE "(v[0-9]+(\.[0-9]+)*)[^|]*zenodo\.$id|zenodo\.$id[^|]*(v[0-9]+(\.[0-9]+)*)" README.md \
-                | grep -oE "v[0-9]+(\.[0-9]+)*" | head -1)
+                | grep -oE "v[0-9]+(\.[0-9]+)*" | head -1 || true)
               if [ -z "$readme_claim" ]; then
                 # Try badge-style: DOI vNN ... zenodo.NNNN
-                readme_claim=$(grep "$id" README.md | grep -oE "v[0-9]+(\.[0-9]+)*" | head -1)
+                readme_claim=$(grep -F "$id" README.md | grep -oE "v[0-9]+(\.[0-9]+)*" | head -1 || true)
               fi
 
               if [ -n "$readme_claim" ] && [ -n "$tver" ]; then
-                if [ "$readme_claim" != "$tver" ]; then
+                normalized_readme_version=$(normalize_version "$readme_claim")
+                normalized_title_version=$(normalize_version "$tver")
+                if [ "$normalized_readme_version" != "$normalized_title_version" ]; then
                   echo "::error::DOI-TITLE MISMATCH: zenodo.$id — README claims $readme_claim but Zenodo title says $tver"
+                  write_result "$id" "FAIL" "DOI_TITLE_MISMATCH" "$resolved_id" "$tver" "$ver" "$readme_claim"
                   fail=1
+                  fail_count=$((fail_count + 1))
+                  echo "::endgroup::"
+                  continue
                 else
                   echo "  README↔Zenodo version match: $readme_claim ✓"
                 fi
@@ -128,13 +494,98 @@ jobs:
               fi
             fi
 
+            write_result "$id" "PASS" "VERIFIED" "$resolved_id" "$tver" "$ver" "$readme_claim"
+            pass_count=$((pass_count + 1))
             echo "::endgroup::"
           done < /tmp/dois.txt
 
-          if [ $fail -eq 1 ]; then
+          if [ "$fail" -eq 1 ]; then
+            overall_status="FAIL"
+          elif [ "$unavailable" -eq 1 ]; then
+            overall_status="UNAVAILABLE"
+          else
+            overall_status="PASS"
+          fi
+
+          jq -cn \
+            --arg observed_at "$(date -u +'%Y-%m-%dT%H:%M:%SZ')" \
+            --arg source_commit "$GITHUB_SHA" \
+            --arg run_id "$GITHUB_RUN_ID" \
+            --arg run_attempt "$GITHUB_RUN_ATTEMPT" \
+            --arg overall_status "$overall_status" \
+            --argjson passed "$pass_count" \
+            --argjson failed "$fail_count" \
+            --argjson unavailable "$unavailable_count" \
+            '{schema_version:1,record_type:"summary",gate:"huklla-t11-doi-title",observed_at:$observed_at,source_commit:$source_commit,run_id:$run_id,run_attempt:$run_attempt,overall_status:$overall_status,counts:{pass:$passed,fail:$failed,unavailable:$unavailable}}' \
+            >> "$receipt"
+
+          if [ "$overall_status" = "FAIL" ]; then
             echo ""
             echo "HUKLLA T11 GATE FAILED — one or more DOIs failed consistency checks."
-            echo "See annotations above. Reference the DOI truth-table in docs/HUKLLA.md."
+            echo "See annotations above and the machine-readable receipt artifact."
             exit 1
+          elif [ "$overall_status" = "UNAVAILABLE" ]; then
+            echo ""
+            echo "HUKLLA T11 GATE UNAVAILABLE — external DOI evidence remained unavailable after bounded retries."
+            echo "No DOI correctness claim was made. See the machine-readable receipt artifact."
+            exit 2
           fi
           echo "HUKLLA T11: all DOIs resolved and titles consistent ✓"
+      - name: Summarize DOI gate receipt
+        if: ${{ always() }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          receipt_dir="${RUNNER_TEMP}/doi-title-gate-receipt"
+          receipt="${receipt_dir}/receipt.jsonl"
+          mkdir -p "$receipt_dir"
+
+          if [ ! -s "$receipt" ]; then
+            jq -cn \
+              --arg observed_at "$(date -u +'%Y-%m-%dT%H:%M:%SZ')" \
+              --arg source_commit "$GITHUB_SHA" \
+              --arg run_id "$GITHUB_RUN_ID" \
+              --arg run_attempt "$GITHUB_RUN_ATTEMPT" \
+              '{schema_version:1,record_type:"summary",gate:"huklla-t11-doi-title",observed_at:$observed_at,source_commit:$source_commit,run_id:$run_id,run_attempt:$run_attempt,overall_status:"FAIL",reason:"VERIFY_STEP_TERMINATED_BEFORE_RECEIPT",counts:{pass:0,fail:1,unavailable:0}}' \
+              > "$receipt"
+          fi
+
+          jq -e -s '
+            length > 0
+            and all(.[];
+              .schema_version == 1
+              and .gate == "huklla-t11-doi-title"
+              and (.record_type == "probe" or .record_type == "result" or .record_type == "summary")
+              and (.status == null or .status == "PASS" or .status == "FAIL" or .status == "UNAVAILABLE")
+              and (.overall_status == null or .overall_status == "PASS" or .overall_status == "FAIL" or .overall_status == "UNAVAILABLE")
+            )
+          ' "$receipt" > /dev/null
+
+          if ! jq -e -s 'any(.[]; .record_type == "summary")' "$receipt" > /dev/null; then
+            jq -cn \
+              --arg observed_at "$(date -u +'%Y-%m-%dT%H:%M:%SZ')" \
+              --arg source_commit "$GITHUB_SHA" \
+              --arg run_id "$GITHUB_RUN_ID" \
+              --arg run_attempt "$GITHUB_RUN_ATTEMPT" \
+              '{schema_version:1,record_type:"summary",gate:"huklla-t11-doi-title",observed_at:$observed_at,source_commit:$source_commit,run_id:$run_id,run_attempt:$run_attempt,overall_status:"FAIL",reason:"VERIFY_STEP_TERMINATED_BEFORE_SUMMARY",counts:{pass:0,fail:1,unavailable:0}}' \
+              >> "$receipt"
+          fi
+
+          {
+            echo "## HUKLLA T11 DOI/title gate"
+            echo
+            jq -rs '
+              map(select(.record_type == "summary")) | last |
+              "- Overall status: **\(.overall_status)**\n- PASS: \(.counts.pass)\n- FAIL: \(.counts.fail)\n- UNAVAILABLE: \(.counts.unavailable)\n- Source commit: `\(.source_commit)`\n- Run: `\(.run_id)` attempt `\(.run_attempt)`"
+            ' "$receipt"
+            echo
+            echo "Timeouts and exhausted transport failures are recorded as UNAVAILABLE and never as DOI correctness."
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload DOI gate receipt
+        if: ${{ always() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: huklla-t11-doi-receipt-${{ github.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/doi-title-gate-receipt/receipt.jsonl
+          if-no-files-found: error
+          retention-days: 14
