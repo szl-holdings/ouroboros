@@ -200,6 +200,55 @@ jobs:
             printf '%s\n' "$value"
           }
 
+          normalize_metadata_version() {
+            local value="$1"
+            local normalized=""
+            local token=""
+            local -a tokens=()
+
+            # Keep extraction bounded before applying a regex to provider data.
+            [ "${#value}" -le 256 ] || return 1
+
+            if normalized=$(normalize_version "$value"); then
+              printf '%s\n' "$normalized"
+              return 0
+            fi
+
+            while IFS= read -r token; do
+              [ -n "$token" ] && tokens+=("$token")
+            done < <(printf '%s\n' "$value" | grep -oE 'v[0-9]+([.][0-9]+)*' || true)
+
+            # A decorated metadata field is admissible only when exactly one
+            # title-relevant version token exists. Repeated or conflicting
+            # tokens are ambiguous and therefore fail closed.
+            [ "${#tokens[@]}" -eq 1 ] || return 1
+            normalize_version "${tokens[0]}"
+          }
+
+          test_metadata_version_normalizer() {
+            local actual=""
+
+            [ "$(normalize_metadata_version 'paper-v18-1.0.0')" = "18" ] || return 1
+            [ "$(normalize_metadata_version '18.0.0')" = "18" ] || return 1
+            [ "$(normalize_metadata_version 'v18.2.0')" = "18.2" ] || return 1
+
+            if actual=$(normalize_metadata_version 'paper-release'); then
+              return 1
+            fi
+            if actual=$(normalize_metadata_version 'paper-v18-v19'); then
+              return 1
+            fi
+            if actual=$(normalize_metadata_version 'paper-v18-copy-v18'); then
+              return 1
+            fi
+            return 0
+          }
+
+          if ! test_metadata_version_normalizer; then
+            echo "::error::DOI METADATA VERSION NORMALIZER SELF-TEST FAILED"
+            exit 1
+          fi
+
           fail=0
           unavailable=0
           pass_count=0
@@ -392,8 +441,8 @@ jobs:
                 echo "::endgroup::"
                 continue
               fi
-              if ! normalized_metadata_version=$(normalize_version "$ver"); then
-                echo "::error::DOI-API INVALID VERSION: zenodo.$id — metadata version '$ver' is not canonical"
+              if ! normalized_metadata_version=$(normalize_metadata_version "$ver"); then
+                echo "::error::DOI-API INVALID VERSION: zenodo.$id — metadata version '$ver' is neither canonical nor uniquely tokenized"
                 write_result "$id" "FAIL" "INVALID_METADATA_VERSION" "$resolved_id" "$tver" "$ver"
                 fail=1
                 fail_count=$((fail_count + 1))
