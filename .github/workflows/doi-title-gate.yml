@@ -19,8 +19,21 @@ jobs:
     # Six admitted DOIs at two endpoints each have a 612-second worst-case
     # network budget; 15 minutes leaves deterministic summary/upload headroom.
     timeout-minutes: 15
+    env:
+      SUBJECT_REPOSITORY: ${{ github.repository }}
+      SUBJECT_REPOSITORY_ID: ${{ github.repository_id }}
+      SUBJECT_EVENT: ${{ github.event_name }}
+      SUBJECT_WORKFLOW_REF: ${{ github.workflow_ref }}
+      SUBJECT_WORKFLOW_SHA: ${{ github.workflow_sha }}
+      SUBJECT_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      SUBJECT_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+      SUBJECT_MERGE_SHA: ${{ github.event_name == 'pull_request' && github.sha || '' }}
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+      - name: Check out exact subject
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
       - name: Extract DOIs from README
         id: extract
         run: |
@@ -42,11 +55,36 @@ jobs:
           readonly max_attempts=3
           readonly backoff_seconds=2
           readonly max_dois=6
+          readonly -a concept_dois=(19944926)
           receipt_dir="${RUNNER_TEMP}/doi-title-gate-receipt"
           receipt="${receipt_dir}/receipt.jsonl"
           request_dir="${RUNNER_TEMP}/doi-title-gate-requests"
           mkdir -p "$receipt_dir" "$request_dir"
           : > "$receipt"
+          checkout_commit=$(git rev-parse HEAD)
+
+          if ! [[ "$SUBJECT_HEAD_SHA" =~ ^[0-9a-f]{40}$ ]] \
+              || ! [[ "$SUBJECT_WORKFLOW_SHA" =~ ^[0-9a-f]{40}$ ]] \
+              || ! [[ "$SUBJECT_BASE_SHA" =~ ^[0-9a-f]{40}$ ]] \
+              || ! [[ "$SUBJECT_REPOSITORY_ID" =~ ^[0-9]+$ ]] \
+              || { [ -n "$SUBJECT_MERGE_SHA" ] && ! [[ "$SUBJECT_MERGE_SHA" =~ ^[0-9a-f]{40}$ ]]; } \
+              || [ "$checkout_commit" != "$SUBJECT_HEAD_SHA" ]; then
+            jq -cn \
+              --arg observed_at "$(date -u +'%Y-%m-%dT%H:%M:%SZ')" \
+              --arg source_commit "$SUBJECT_HEAD_SHA" \
+              --arg repository "$SUBJECT_REPOSITORY" \
+              --arg repository_id "$SUBJECT_REPOSITORY_ID" \
+              --arg event "$SUBJECT_EVENT" \
+              --arg workflow_ref "$SUBJECT_WORKFLOW_REF" \
+              --arg workflow_sha "$SUBJECT_WORKFLOW_SHA" \
+              --arg base_sha "$SUBJECT_BASE_SHA" \
+              --arg merge_sha "$SUBJECT_MERGE_SHA" \
+              --arg checkout_commit "$checkout_commit" \
+              '{schema_version:1,record_type:"summary",gate:"huklla-t11-doi-title",observed_at:$observed_at,source_commit:$source_commit,overall_status:"FAIL",reason:"SUBJECT_PROVENANCE_MISMATCH",counts:{pass:0,fail:1,unavailable:0},provenance:{repository:$repository,repository_id:$repository_id,event:$event,workflow_ref:$workflow_ref,workflow_sha:$workflow_sha,head_sha:$source_commit,base_sha:$base_sha,merge_sha:($merge_sha|if length>0 then . else null end),checkout_commit:$checkout_commit}}' \
+              >> "$receipt"
+            echo "::error::SUBJECT PROVENANCE MISMATCH: checkout '$checkout_commit' does not match exact head '$SUBJECT_HEAD_SHA'"
+            exit 1
+          fi
 
           write_probe() {
             local id="$1"
@@ -59,7 +97,7 @@ jobs:
             local final_url="$8"
             jq -cn \
               --arg observed_at "$(date -u +'%Y-%m-%dT%H:%M:%SZ')" \
-              --arg source_commit "$GITHUB_SHA" \
+              --arg source_commit "$SUBJECT_HEAD_SHA" \
               --arg run_id "$GITHUB_RUN_ID" \
               --arg run_attempt "$GITHUB_RUN_ATTEMPT" \
               --arg doi "10.5281/zenodo.$id" \
@@ -70,7 +108,10 @@ jobs:
               --arg final_url "$final_url" \
               --argjson curl_exit "$curl_exit" \
               --argjson attempts "$attempts" \
-              '{schema_version:1,record_type:"probe",gate:"huklla-t11-doi-title",observed_at:$observed_at,source_commit:$source_commit,run_id:$run_id,run_attempt:$run_attempt,doi:$doi,endpoint:$endpoint,status:$status,reason:$reason,http_status:$http_status,final_url:$final_url,curl_exit:$curl_exit,attempts:$attempts}' \
+              --arg repository "$SUBJECT_REPOSITORY" \
+              --arg workflow_sha "$SUBJECT_WORKFLOW_SHA" \
+              --arg checkout_commit "$checkout_commit" \
+              '{schema_version:1,record_type:"probe",gate:"huklla-t11-doi-title",observed_at:$observed_at,source_commit:$source_commit,run_id:$run_id,run_attempt:$run_attempt,doi:$doi,endpoint:$endpoint,status:$status,reason:$reason,http_status:$http_status,final_url:$final_url,curl_exit:$curl_exit,attempts:$attempts,provenance:{repository:$repository,workflow_sha:$workflow_sha,head_sha:$source_commit,checkout_commit:$checkout_commit}}' \
               >> "$receipt"
           }
 
@@ -82,9 +123,12 @@ jobs:
             local title_version="${5:-}"
             local metadata_version="${6:-}"
             local readme_version="${7:-}"
+            local metadata_sha256="${8:-}"
+            local normalized_series="${9:-}"
+            local artifact_version="${10:-}"
             jq -cn \
               --arg observed_at "$(date -u +'%Y-%m-%dT%H:%M:%SZ')" \
-              --arg source_commit "$GITHUB_SHA" \
+              --arg source_commit "$SUBJECT_HEAD_SHA" \
               --arg run_id "$GITHUB_RUN_ID" \
               --arg run_attempt "$GITHUB_RUN_ATTEMPT" \
               --arg doi "10.5281/zenodo.$id" \
@@ -94,7 +138,18 @@ jobs:
               --arg title_version "$title_version" \
               --arg metadata_version "$metadata_version" \
               --arg readme_version "$readme_version" \
-              '{schema_version:1,record_type:"result",gate:"huklla-t11-doi-title",observed_at:$observed_at,source_commit:$source_commit,run_id:$run_id,run_attempt:$run_attempt,doi:$doi,status:$status,reason:$reason,resolved_record_id:($resolved_id|if length>0 then . else null end),title_version:($title_version|if length>0 then . else null end),metadata_version:($metadata_version|if length>0 then . else null end),readme_version:($readme_version|if length>0 then . else null end)}' \
+              --arg metadata_sha256 "$metadata_sha256" \
+              --arg normalized_series "$normalized_series" \
+              --arg artifact_version "$artifact_version" \
+              --arg repository "$SUBJECT_REPOSITORY" \
+              --arg repository_id "$SUBJECT_REPOSITORY_ID" \
+              --arg event "$SUBJECT_EVENT" \
+              --arg workflow_ref "$SUBJECT_WORKFLOW_REF" \
+              --arg workflow_sha "$SUBJECT_WORKFLOW_SHA" \
+              --arg base_sha "$SUBJECT_BASE_SHA" \
+              --arg merge_sha "$SUBJECT_MERGE_SHA" \
+              --arg checkout_commit "$checkout_commit" \
+              '{schema_version:1,record_type:"result",gate:"huklla-t11-doi-title",observed_at:$observed_at,source_commit:$source_commit,run_id:$run_id,run_attempt:$run_attempt,doi:$doi,status:$status,reason:$reason,resolved_record_id:($resolved_id|if length>0 then . else null end),title_version:($title_version|if length>0 then . else null end),metadata_version:($metadata_version|if length>0 then . else null end),readme_version:($readme_version|if length>0 then . else null end),metadata_sha256:($metadata_sha256|if length>0 then . else null end),normalized_series:($normalized_series|if length>0 then . else null end),artifact_version:($artifact_version|if length>0 then . else null end),provenance:{repository:$repository,repository_id:$repository_id,event:$event,workflow_ref:$workflow_ref,workflow_sha:$workflow_sha,head_sha:$source_commit,base_sha:$base_sha,merge_sha:($merge_sha|if length>0 then . else null end),checkout_commit:$checkout_commit}}' \
               >> "$receipt"
           }
 
@@ -190,10 +245,19 @@ jobs:
             return 2
           }
 
+          is_admitted_concept_doi() {
+            local candidate="$1"
+            local concept_id=""
+            for concept_id in "${concept_dois[@]}"; do
+              [ "$candidate" = "$concept_id" ] && return 0
+            done
+            return 1
+          }
+
           normalize_version() {
             local value="$1"
             value="${value#v}"
-            [[ "$value" =~ ^[0-9]+([.][0-9]+)*$ ]] || return 1
+            [[ "$value" =~ ^(0|[1-9][0-9]*)([.](0|[1-9][0-9]*))*$ ]] || return 1
             while [[ "$value" == *".0" ]]; do
               value="${value%.0}"
             done
@@ -203,10 +267,10 @@ jobs:
           normalize_metadata_version() {
             local value="$1"
             local normalized=""
-            local token=""
-            local -a tokens=()
+            local series_version=""
+            local artifact_version=""
 
-            # Keep extraction bounded before applying a regex to provider data.
+            # Keep matching bounded before applying a regex to provider data.
             [ "${#value}" -le 256 ] || return 1
 
             if normalized=$(normalize_version "$value"); then
@@ -214,15 +278,31 @@ jobs:
               return 0
             fi
 
+            # Zenodo paper deposits carry a thesis-series version and a
+            # separate artifact revision. Match the complete provider form.
+            [[ "$value" =~ ^paper-v((0|[1-9][0-9]*)([.](0|[1-9][0-9]*))*)-((0|[1-9][0-9]*)[.](0|[1-9][0-9]*)[.](0|[1-9][0-9]*))$ ]] || return 1
+            series_version="${BASH_REMATCH[1]}"
+            artifact_version="${BASH_REMATCH[5]}"
+            normalize_version "$artifact_version" > /dev/null || return 1
+            normalize_version "$series_version"
+          }
+
+          extract_unique_version_token() {
+            local value="$1"
+            local token=""
+            local -a tokens=()
+
+            [ "${#value}" -le 512 ] || return 1
             while IFS= read -r token; do
               [ -n "$token" ] && tokens+=("$token")
             done < <(printf '%s\n' "$value" | grep -oE 'v[0-9]+([.][0-9]+)*' || true)
 
-            # A decorated metadata field is admissible only when exactly one
-            # title-relevant version token exists. Repeated or conflicting
-            # tokens are ambiguous and therefore fail closed.
             [ "${#tokens[@]}" -eq 1 ] || return 1
-            normalize_version "${tokens[0]}"
+            token="${tokens[0]}"
+            case "$value" in
+              *[[:alnum:]_]"$token"*|*"$token"[[:alnum:]_.]*) return 1 ;;
+            esac
+            printf '%s\n' "$token"
           }
 
           test_metadata_version_normalizer() {
@@ -231,14 +311,39 @@ jobs:
             [ "$(normalize_metadata_version 'paper-v18-1.0.0')" = "18" ] || return 1
             [ "$(normalize_metadata_version '18.0.0')" = "18" ] || return 1
             [ "$(normalize_metadata_version 'v18.2.0')" = "18.2" ] || return 1
+            [ "$(extract_unique_version_token 'Ouroboros Thesis v18.0 — Multi-track')" = "v18.0" ] || return 1
 
             if actual=$(normalize_metadata_version 'paper-release'); then
               return 1
             fi
-            if actual=$(normalize_metadata_version 'paper-v18-v19'); then
+            if actual=$(normalize_metadata_version 'release-v18'); then
               return 1
             fi
-            if actual=$(normalize_metadata_version 'paper-v18-copy-v18'); then
+            if actual=$(normalize_metadata_version 'paper-v18-1.0.0-extra'); then
+              return 1
+            fi
+            if actual=$(normalize_metadata_version 'paper-v18-v1'); then
+              return 1
+            fi
+            if actual=$(normalize_metadata_version 'paper-v018-1.0.0'); then
+              return 1
+            fi
+            if actual=$(normalize_metadata_version 'paper-v18-1.0'); then
+              return 1
+            fi
+            if actual=$(normalize_metadata_version 'paper-v18-1.0.00'); then
+              return 1
+            fi
+            if actual=$(extract_unique_version_token 'Ouroboros v18 and v19'); then
+              return 1
+            fi
+            if actual=$(extract_unique_version_token 'Ouroboros buildv18'); then
+              return 1
+            fi
+            if actual=$(extract_unique_version_token 'Ouroboros v18..0'); then
+              return 1
+            fi
+            if actual=$(extract_unique_version_token 'Ouroboros v18.'); then
               return 1
             fi
             return 0
@@ -261,12 +366,20 @@ jobs:
             echo "::error::DOI SET OUT OF BOUNDS: found '$doi_count', expected 1..$max_dois"
             jq -cn \
               --arg observed_at "$(date -u +'%Y-%m-%dT%H:%M:%SZ')" \
-              --arg source_commit "$GITHUB_SHA" \
+              --arg source_commit "$SUBJECT_HEAD_SHA" \
               --arg run_id "$GITHUB_RUN_ID" \
               --arg run_attempt "$GITHUB_RUN_ATTEMPT" \
               --arg doi_count "$doi_count" \
               --argjson max_dois "$max_dois" \
-              '{schema_version:1,record_type:"summary",gate:"huklla-t11-doi-title",observed_at:$observed_at,source_commit:$source_commit,run_id:$run_id,run_attempt:$run_attempt,overall_status:"FAIL",reason:"DOI_SET_OUT_OF_BOUNDS",doi_count:$doi_count,max_dois:$max_dois,counts:{pass:0,fail:1,unavailable:0}}' \
+              --arg repository "$SUBJECT_REPOSITORY" \
+              --arg repository_id "$SUBJECT_REPOSITORY_ID" \
+              --arg event "$SUBJECT_EVENT" \
+              --arg workflow_ref "$SUBJECT_WORKFLOW_REF" \
+              --arg workflow_sha "$SUBJECT_WORKFLOW_SHA" \
+              --arg base_sha "$SUBJECT_BASE_SHA" \
+              --arg merge_sha "$SUBJECT_MERGE_SHA" \
+              --arg checkout_commit "$checkout_commit" \
+              '{schema_version:1,record_type:"summary",gate:"huklla-t11-doi-title",observed_at:$observed_at,source_commit:$source_commit,run_id:$run_id,run_attempt:$run_attempt,overall_status:"FAIL",reason:"DOI_SET_OUT_OF_BOUNDS",doi_count:$doi_count,max_dois:$max_dois,counts:{pass:0,fail:1,unavailable:0},provenance:{repository:$repository,repository_id:$repository_id,event:$event,workflow_ref:$workflow_ref,workflow_sha:$workflow_sha,head_sha:$source_commit,base_sha:$base_sha,merge_sha:($merge_sha|if length>0 then . else null end),checkout_commit:$checkout_commit}}' \
               >> "$receipt"
             exit 1
           fi
@@ -342,6 +455,15 @@ jobs:
               continue
             fi
             write_probe "$id" "zenodo.org" "PASS" "HTTP_2XX" "$meta_status" "$meta_curl_exit" "$meta_attempts" "$meta_effective_url"
+            metadata_sha256=$(sha256sum "$meta_file" | awk '{print $1}')
+            if ! [[ "$metadata_sha256" =~ ^[0-9a-f]{64}$ ]]; then
+              echo "::error::DOI-API METADATA DIGEST FAILURE: zenodo.$id"
+              write_result "$id" "FAIL" "METADATA_DIGEST_FAILURE"
+              fail=1
+              fail_count=$((fail_count + 1))
+              echo "::endgroup::"
+              continue
+            fi
 
             if ! jq -e '
                 type == "object"
@@ -350,10 +472,11 @@ jobs:
                 and (.metadata | type) == "object"
                 and (.metadata.title | type) == "string"
                 and (.metadata.title | length) > 0
-                and ((.metadata.version == null) or ((.metadata.version | type) == "string" and (.metadata.version | length) > 0))
+                and (.metadata.version | type) == "string"
+                and (.metadata.version | length) > 0
               ' "$meta_file" > /dev/null 2>&1; then
               echo "::error::DOI-API INVALID METADATA: zenodo.$id — response is not the required Zenodo JSON record shape"
-              write_result "$id" "FAIL" "INVALID_METADATA"
+              write_result "$id" "FAIL" "INVALID_METADATA" "" "" "" "" "$metadata_sha256"
               fail=1
               fail_count=$((fail_count + 1))
               echo "::endgroup::"
@@ -372,13 +495,28 @@ jobs:
             expected_record_doi="10.5281/zenodo.$resolved_id"
             is_concept=0
             if [ "$resolved_id" != "$id" ]; then
+              if ! is_admitted_concept_doi "$id"; then
+                echo "::error::DOI-IDENTITY MISMATCH: zenodo.$id — version-specific DOI unexpectedly redirected to record $resolved_id"
+                write_result "$id" "FAIL" "UNEXPECTED_RECORD_REDIRECT" "$resolved_id" "" "" "" "$metadata_sha256"
+                fail=1
+                fail_count=$((fail_count + 1))
+                echo "::endgroup::"
+                continue
+              fi
               is_concept=1
               echo "  concept-DOI redirect: zenodo.$id → zenodo.$resolved_id (always-latest — version cross-check skipped) ✓"
+            elif is_admitted_concept_doi "$id"; then
+              echo "::error::DOI-IDENTITY MISMATCH: zenodo.$id — admitted concept DOI did not resolve to a distinct version record"
+              write_result "$id" "FAIL" "CONCEPT_DID_NOT_RESOLVE" "$resolved_id" "" "" "" "$metadata_sha256"
+              fail=1
+              fail_count=$((fail_count + 1))
+              echo "::endgroup::"
+              continue
             fi
 
             if [ "$record_doi" != "$expected_record_doi" ]; then
               echo "::error::DOI-IDENTITY MISMATCH: zenodo.$id — record id $resolved_id is bound to '$record_doi', expected '$expected_record_doi'"
-              write_result "$id" "FAIL" "RECORD_DOI_IDENTITY_MISMATCH" "$resolved_id"
+              write_result "$id" "FAIL" "RECORD_DOI_IDENTITY_MISMATCH" "$resolved_id" "" "" "" "$metadata_sha256"
               fail=1
               fail_count=$((fail_count + 1))
               echo "::endgroup::"
@@ -390,7 +528,7 @@ jobs:
               concept_doi=$(jq -r '.conceptdoi // ""' "$meta_file")
               if [ "$concept_record_id" != "$id" ] || [ "$concept_doi" != "$requested_doi" ]; then
                 echo "::error::DOI-IDENTITY MISMATCH: zenodo.$id — redirected record $resolved_id is not bound to requested concept DOI"
-                write_result "$id" "FAIL" "CONCEPT_IDENTITY_MISMATCH" "$resolved_id"
+                write_result "$id" "FAIL" "CONCEPT_IDENTITY_MISMATCH" "$resolved_id" "" "" "" "$metadata_sha256"
                 fail=1
                 fail_count=$((fail_count + 1))
                 echo "::endgroup::"
@@ -398,7 +536,7 @@ jobs:
               fi
             elif [ "$record_doi" != "$requested_doi" ]; then
               echo "::error::DOI-IDENTITY MISMATCH: zenodo.$id — version-specific record does not match the requested DOI"
-              write_result "$id" "FAIL" "REQUESTED_RECORD_IDENTITY_MISMATCH" "$resolved_id"
+              write_result "$id" "FAIL" "REQUESTED_RECORD_IDENTITY_MISMATCH" "$resolved_id" "" "" "" "$metadata_sha256"
               fail=1
               fail_count=$((fail_count + 1))
               echo "::endgroup::"
@@ -408,7 +546,7 @@ jobs:
             if [ "$meta_effective_url" != "https://zenodo.org/api/records/$resolved_id" ] \
                 && [ "$meta_effective_url" != "https://zenodo.org/api/records/$resolved_id/" ]; then
               echo "::error::DOI-IDENTITY MISMATCH: zenodo.$id — metadata final URL '$meta_effective_url' does not name record $resolved_id"
-              write_result "$id" "FAIL" "METADATA_FINAL_URL_MISMATCH" "$resolved_id"
+              write_result "$id" "FAIL" "METADATA_FINAL_URL_MISMATCH" "$resolved_id" "" "" "" "$metadata_sha256"
               fail=1
               fail_count=$((fail_count + 1))
               echo "::endgroup::"
@@ -417,7 +555,7 @@ jobs:
 
             if ! [[ "$doi_effective_url" =~ ^https://zenodo\.org/records?/$resolved_id/?$ ]]; then
               echo "::error::DOI-IDENTITY MISMATCH: zenodo.$id — resolver final URL '$doi_effective_url' does not name record $resolved_id"
-              write_result "$id" "FAIL" "RESOLVER_FINAL_URL_MISMATCH" "$resolved_id"
+              write_result "$id" "FAIL" "RESOLVER_FINAL_URL_MISMATCH" "$resolved_id" "" "" "" "$metadata_sha256"
               fail=1
               fail_count=$((fail_count + 1))
               echo "::endgroup::"
@@ -425,54 +563,78 @@ jobs:
             fi
 
             title=$(jq -r '.metadata.title' "$meta_file")
-            ver=$(jq -r '.metadata.version // "MISSING"' "$meta_file")
+            ver=$(jq -r '.metadata.version' "$meta_file")
             echo "  title:   $title"
             echo "  version: $ver"
 
-            # Step 3: Extract version token from title (e.g. v13, v6.3.0)
-            tver=$(printf '%s\n' "$title" | grep -oE "v[0-9]+(\.[0-9]+)*" | head -1 || true)
-
-            if [ -n "$tver" ] && [ "$ver" != "MISSING" ]; then
-              if ! normalized_title_version=$(normalize_version "$tver"); then
-                echo "::error::DOI-TITLE INVALID VERSION: zenodo.$id — title token '$tver' is not canonical"
-                write_result "$id" "FAIL" "INVALID_TITLE_VERSION" "$resolved_id" "$tver" "$ver"
-                fail=1
-                fail_count=$((fail_count + 1))
-                echo "::endgroup::"
-                continue
-              fi
-              if ! normalized_metadata_version=$(normalize_metadata_version "$ver"); then
-                echo "::error::DOI-API INVALID VERSION: zenodo.$id — metadata version '$ver' is neither canonical nor uniquely tokenized"
-                write_result "$id" "FAIL" "INVALID_METADATA_VERSION" "$resolved_id" "$tver" "$ver"
-                fail=1
-                fail_count=$((fail_count + 1))
-                echo "::endgroup::"
-                continue
-              fi
-              if [ "$normalized_title_version" != "$normalized_metadata_version" ]; then
-                echo "::error::VERSION-SKEW on zenodo.$id — title says $tver but version field is $ver"
-                write_result "$id" "FAIL" "TITLE_METADATA_VERSION_MISMATCH" "$resolved_id" "$tver" "$ver"
-                fail=1
-                fail_count=$((fail_count + 1))
-                echo "::endgroup::"
-                continue
-              fi
-              echo "  version consistency: $tver ↔ $ver ✓"
+            # Step 3: Require exactly one delimited version token in the title.
+            if ! tver=$(extract_unique_version_token "$title"); then
+              echo "::error::DOI-TITLE INVALID VERSION: zenodo.$id — title has no unique, delimited version token"
+              write_result "$id" "FAIL" "INVALID_TITLE_VERSION" "$resolved_id" "" "$ver" "" "$metadata_sha256"
+              fail=1
+              fail_count=$((fail_count + 1))
+              echo "::endgroup::"
+              continue
             fi
+
+            if ! normalized_title_version=$(normalize_version "$tver"); then
+              echo "::error::DOI-TITLE INVALID VERSION: zenodo.$id — title token '$tver' is not canonical"
+              write_result "$id" "FAIL" "INVALID_TITLE_VERSION" "$resolved_id" "$tver" "$ver" "" "$metadata_sha256"
+              fail=1
+              fail_count=$((fail_count + 1))
+              echo "::endgroup::"
+              continue
+            fi
+            if ! normalized_metadata_version=$(normalize_metadata_version "$ver"); then
+              echo "::error::DOI-API INVALID VERSION: zenodo.$id — metadata version '$ver' is not canonical"
+              write_result "$id" "FAIL" "INVALID_METADATA_VERSION" "$resolved_id" "$tver" "$ver" "" "$metadata_sha256"
+              fail=1
+              fail_count=$((fail_count + 1))
+              echo "::endgroup::"
+              continue
+            fi
+            metadata_artifact_version=""
+            if [[ "$ver" =~ ^paper-v((0|[1-9][0-9]*)([.](0|[1-9][0-9]*))*)-((0|[1-9][0-9]*)[.](0|[1-9][0-9]*)[.](0|[1-9][0-9]*))$ ]]; then
+              metadata_artifact_version="${BASH_REMATCH[5]}"
+            fi
+            if [ "$normalized_title_version" != "$normalized_metadata_version" ]; then
+              echo "::error::VERSION-SKEW on zenodo.$id — title says $tver but version field is $ver"
+              write_result "$id" "FAIL" "TITLE_METADATA_VERSION_MISMATCH" "$resolved_id" "$tver" "$ver" "" "$metadata_sha256"
+              fail=1
+              fail_count=$((fail_count + 1))
+              echo "::endgroup::"
+              continue
+            fi
+            echo "  version consistency: $tver ↔ $ver ✓"
 
             # Step 4: Cross-check README version claim vs Zenodo title.
             # Concept DOIs are always-latest and carry no pinned version, so this
             # cross-check applies only to version-specific DOIs (see is_concept above).
             readme_claim=""
+            readme_lines=$(grep -F "$id" README.md || true)
+            readme_segments=$(printf '%s\n' "$readme_lines" \
+              | sed -E 's/[;,|]/\n/g; s/ — /\n/g' \
+              | grep -F "$id" || true)
             if [ "$is_concept" = "1" ]; then
-              echo "  concept DOI — README carries no version claim to cross-check (by design) ✓"
+              if printf '%s\n' "$readme_segments" | grep -qE 'v[0-9]'; then
+                echo "::error::CONCEPT DOI PINNED IN README: zenodo.$id — always-latest references cannot carry a version claim"
+                write_result "$id" "FAIL" "CONCEPT_DOI_PINNED_VERSION" "$resolved_id" "$tver" "$ver" "" "$metadata_sha256"
+                fail=1
+                fail_count=$((fail_count + 1))
+                echo "::endgroup::"
+                continue
+              fi
+              echo "  concept DOI — no pinned README version claim ✓"
             else
-              # Look for lines that reference this DOI and extract claimed version
-              readme_claim=$(grep -oE "(v[0-9]+(\.[0-9]+)*)[^|]*zenodo\.$id|zenodo\.$id[^|]*(v[0-9]+(\.[0-9]+)*)" README.md \
-                | grep -oE "v[0-9]+(\.[0-9]+)*" | head -1 || true)
-              if [ -z "$readme_claim" ]; then
-                # Try badge-style: DOI vNN ... zenodo.NNNN
-                readme_claim=$(grep -F "$id" README.md | grep -oE "v[0-9]+(\.[0-9]+)*" | head -1 || true)
+              if printf '%s\n' "$readme_segments" | grep -qE 'v[0-9]'; then
+                if ! readme_claim=$(extract_unique_version_token "$readme_segments"); then
+                  echo "::error::DOI-TITLE AMBIGUOUS README VERSION: zenodo.$id — expected exactly one delimited version token"
+                  write_result "$id" "FAIL" "AMBIGUOUS_README_VERSION" "$resolved_id" "$tver" "$ver" "" "$metadata_sha256"
+                  fail=1
+                  fail_count=$((fail_count + 1))
+                  echo "::endgroup::"
+                  continue
+                fi
               fi
 
               if [ -n "$readme_claim" ] && [ -n "$tver" ]; then
@@ -480,7 +642,7 @@ jobs:
                 normalized_title_version=$(normalize_version "$tver")
                 if [ "$normalized_readme_version" != "$normalized_title_version" ]; then
                   echo "::error::DOI-TITLE MISMATCH: zenodo.$id — README claims $readme_claim but Zenodo title says $tver"
-                  write_result "$id" "FAIL" "DOI_TITLE_MISMATCH" "$resolved_id" "$tver" "$ver" "$readme_claim"
+                  write_result "$id" "FAIL" "DOI_TITLE_MISMATCH" "$resolved_id" "$tver" "$ver" "$readme_claim" "$metadata_sha256"
                   fail=1
                   fail_count=$((fail_count + 1))
                   echo "::endgroup::"
@@ -494,7 +656,13 @@ jobs:
               fi
             fi
 
-            write_result "$id" "PASS" "VERIFIED" "$resolved_id" "$tver" "$ver" "$readme_claim"
+            result_reason="VERIFIED"
+            if [ "$is_concept" = "1" ]; then
+              result_reason="CONCEPT_POINTER_VERIFIED"
+            elif [ -z "$readme_claim" ]; then
+              result_reason="METADATA_VERIFIED_README_UNVERSIONED"
+            fi
+            write_result "$id" "PASS" "$result_reason" "$resolved_id" "$tver" "$ver" "$readme_claim" "$metadata_sha256" "$normalized_metadata_version" "$metadata_artifact_version"
             pass_count=$((pass_count + 1))
             echo "::endgroup::"
           done < /tmp/dois.txt
@@ -509,14 +677,22 @@ jobs:
 
           jq -cn \
             --arg observed_at "$(date -u +'%Y-%m-%dT%H:%M:%SZ')" \
-            --arg source_commit "$GITHUB_SHA" \
+            --arg source_commit "$SUBJECT_HEAD_SHA" \
             --arg run_id "$GITHUB_RUN_ID" \
             --arg run_attempt "$GITHUB_RUN_ATTEMPT" \
             --arg overall_status "$overall_status" \
             --argjson passed "$pass_count" \
             --argjson failed "$fail_count" \
             --argjson unavailable "$unavailable_count" \
-            '{schema_version:1,record_type:"summary",gate:"huklla-t11-doi-title",observed_at:$observed_at,source_commit:$source_commit,run_id:$run_id,run_attempt:$run_attempt,overall_status:$overall_status,counts:{pass:$passed,fail:$failed,unavailable:$unavailable}}' \
+            --arg repository "$SUBJECT_REPOSITORY" \
+            --arg repository_id "$SUBJECT_REPOSITORY_ID" \
+            --arg event "$SUBJECT_EVENT" \
+            --arg workflow_ref "$SUBJECT_WORKFLOW_REF" \
+            --arg workflow_sha "$SUBJECT_WORKFLOW_SHA" \
+            --arg base_sha "$SUBJECT_BASE_SHA" \
+            --arg merge_sha "$SUBJECT_MERGE_SHA" \
+            --arg checkout_commit "$checkout_commit" \
+            '{schema_version:1,record_type:"summary",gate:"huklla-t11-doi-title",observed_at:$observed_at,source_commit:$source_commit,run_id:$run_id,run_attempt:$run_attempt,overall_status:$overall_status,counts:{pass:$passed,fail:$failed,unavailable:$unavailable},provenance:{repository:$repository,repository_id:$repository_id,event:$event,workflow_ref:$workflow_ref,workflow_sha:$workflow_sha,head_sha:$source_commit,base_sha:$base_sha,merge_sha:($merge_sha|if length>0 then . else null end),checkout_commit:$checkout_commit}}' \
             >> "$receipt"
 
           if [ "$overall_status" = "FAIL" ]; then
@@ -539,14 +715,23 @@ jobs:
           receipt_dir="${RUNNER_TEMP}/doi-title-gate-receipt"
           receipt="${receipt_dir}/receipt.jsonl"
           mkdir -p "$receipt_dir"
+          checkout_commit=$(git rev-parse HEAD)
 
           if [ ! -s "$receipt" ]; then
             jq -cn \
               --arg observed_at "$(date -u +'%Y-%m-%dT%H:%M:%SZ')" \
-              --arg source_commit "$GITHUB_SHA" \
+              --arg source_commit "$SUBJECT_HEAD_SHA" \
               --arg run_id "$GITHUB_RUN_ID" \
               --arg run_attempt "$GITHUB_RUN_ATTEMPT" \
-              '{schema_version:1,record_type:"summary",gate:"huklla-t11-doi-title",observed_at:$observed_at,source_commit:$source_commit,run_id:$run_id,run_attempt:$run_attempt,overall_status:"FAIL",reason:"VERIFY_STEP_TERMINATED_BEFORE_RECEIPT",counts:{pass:0,fail:1,unavailable:0}}' \
+              --arg repository "$SUBJECT_REPOSITORY" \
+              --arg repository_id "$SUBJECT_REPOSITORY_ID" \
+              --arg event "$SUBJECT_EVENT" \
+              --arg workflow_ref "$SUBJECT_WORKFLOW_REF" \
+              --arg workflow_sha "$SUBJECT_WORKFLOW_SHA" \
+              --arg base_sha "$SUBJECT_BASE_SHA" \
+              --arg merge_sha "$SUBJECT_MERGE_SHA" \
+              --arg checkout_commit "$checkout_commit" \
+              '{schema_version:1,record_type:"summary",gate:"huklla-t11-doi-title",observed_at:$observed_at,source_commit:$source_commit,run_id:$run_id,run_attempt:$run_attempt,overall_status:"FAIL",reason:"VERIFY_STEP_TERMINATED_BEFORE_RECEIPT",counts:{pass:0,fail:1,unavailable:0},provenance:{repository:$repository,repository_id:$repository_id,event:$event,workflow_ref:$workflow_ref,workflow_sha:$workflow_sha,head_sha:$source_commit,base_sha:$base_sha,merge_sha:($merge_sha|if length>0 then . else null end),checkout_commit:$checkout_commit}}' \
               > "$receipt"
           fi
 
@@ -558,16 +743,47 @@ jobs:
               and (.record_type == "probe" or .record_type == "result" or .record_type == "summary")
               and (.status == null or .status == "PASS" or .status == "FAIL" or .status == "UNAVAILABLE")
               and (.overall_status == null or .overall_status == "PASS" or .overall_status == "FAIL" or .overall_status == "UNAVAILABLE")
+              and (.record_type != "summary" or (
+                (.provenance.repository | type) == "string"
+                and (.provenance.repository_id | type) == "string"
+                and (.provenance.event | type) == "string"
+                and (.provenance.workflow_ref | type) == "string"
+                and (.provenance.workflow_sha | type) == "string"
+                and (.provenance.head_sha | type) == "string"
+                and (.provenance.base_sha | type) == "string"
+                and (.provenance.checkout_commit | test("^[0-9a-f]{40}$"))
+                and .source_commit == .provenance.head_sha
+                and (
+                  if .reason == "SUBJECT_PROVENANCE_MISMATCH" then
+                    .overall_status == "FAIL"
+                  else
+                    (.provenance.repository_id | test("^[0-9]+$"))
+                    and (.provenance.workflow_sha | test("^[0-9a-f]{40}$"))
+                    and (.provenance.head_sha | test("^[0-9a-f]{40}$"))
+                    and (.provenance.base_sha | test("^[0-9a-f]{40}$"))
+                    and (.provenance.merge_sha == null or (.provenance.merge_sha | test("^[0-9a-f]{40}$")))
+                    and .provenance.checkout_commit == .provenance.head_sha
+                  end
+                )
+              ))
             )
           ' "$receipt" > /dev/null
 
           if ! jq -e -s 'any(.[]; .record_type == "summary")' "$receipt" > /dev/null; then
             jq -cn \
               --arg observed_at "$(date -u +'%Y-%m-%dT%H:%M:%SZ')" \
-              --arg source_commit "$GITHUB_SHA" \
+              --arg source_commit "$SUBJECT_HEAD_SHA" \
               --arg run_id "$GITHUB_RUN_ID" \
               --arg run_attempt "$GITHUB_RUN_ATTEMPT" \
-              '{schema_version:1,record_type:"summary",gate:"huklla-t11-doi-title",observed_at:$observed_at,source_commit:$source_commit,run_id:$run_id,run_attempt:$run_attempt,overall_status:"FAIL",reason:"VERIFY_STEP_TERMINATED_BEFORE_SUMMARY",counts:{pass:0,fail:1,unavailable:0}}' \
+              --arg repository "$SUBJECT_REPOSITORY" \
+              --arg repository_id "$SUBJECT_REPOSITORY_ID" \
+              --arg event "$SUBJECT_EVENT" \
+              --arg workflow_ref "$SUBJECT_WORKFLOW_REF" \
+              --arg workflow_sha "$SUBJECT_WORKFLOW_SHA" \
+              --arg base_sha "$SUBJECT_BASE_SHA" \
+              --arg merge_sha "$SUBJECT_MERGE_SHA" \
+              --arg checkout_commit "$checkout_commit" \
+              '{schema_version:1,record_type:"summary",gate:"huklla-t11-doi-title",observed_at:$observed_at,source_commit:$source_commit,run_id:$run_id,run_attempt:$run_attempt,overall_status:"FAIL",reason:"VERIFY_STEP_TERMINATED_BEFORE_SUMMARY",counts:{pass:0,fail:1,unavailable:0},provenance:{repository:$repository,repository_id:$repository_id,event:$event,workflow_ref:$workflow_ref,workflow_sha:$workflow_sha,head_sha:$source_commit,base_sha:$base_sha,merge_sha:($merge_sha|if length>0 then . else null end),checkout_commit:$checkout_commit}}' \
               >> "$receipt"
           fi
 
@@ -585,7 +801,7 @@ jobs:
         if: ${{ always() }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: huklla-t11-doi-receipt-${{ github.sha }}-${{ github.run_attempt }}
+          name: huklla-t11-doi-receipt-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/doi-title-gate-receipt/receipt.jsonl
           if-no-files-found: error
           retention-days: 14
